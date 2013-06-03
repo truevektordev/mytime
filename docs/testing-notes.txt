@@ -1,0 +1,22 @@
+java -jar JsTestDriver.jar --port 9876
+http://localhost:9876/capture
+java -jar JsTestDriver.jar --tests all --reset
+NOTE: reset may only be required when using jasmine. Not sure.
+
+
+* With the Jasmine adapter, one has to run all tests in the matched test files
+* Even if Jasmine were filtering out which tests to run, still all tests files are loaded first,
+  which means all dependencies get preloaded anyway
+* Test coverage will probably only work if we put the sources in the "load" config section, which
+  means all will be pre-loaded
+* Test coverage might use a different source loader which would take some tweaking of our AMD plugin,
+  or we could just set async: false
+* In order to load something without the "/test/" context path via the "load:" section of the config,
+  one must use the full URL (ex: http://localhost:9876/website-static/src/dojo/dojo.js). Just
+  staring with "/" doesn't work.
+* you can't set up a matcher for "/static/*". "/static/" seems to be used by JsTestDriver
+* The default basePath is the location of jsTestDriver.conf.
+* If you try to put a CSS file in the "load:" config section, it will work the first time, but you
+  will have to reset the server before running it again. I believe it tries to add the css include
+  again and then wait for an onload that never comes because it was already loaded or something like
+  that.

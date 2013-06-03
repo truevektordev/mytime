@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Time Logger</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="text/javascript" src="script/dojo/dojo/dojo.js"></script>
+  <script type="text/javascript" src="script/mytime/main.js"></script>
+</head>
+<body>
+	<div class="timegrid">
+		<table>
+			<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>Wednesday, 31 September</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>7:00 am</th>
+					<td>
+						<div class="small-ticks ticks-1"></div>
+						<div class="small-ticks ticks-2"></div>
+						<div class="large-ticks ticks-3"></div>
+						<div class="small-ticks ticks-4"></div>
+						<div class="small-ticks ticks-5"></div>
+						<div class="large-ticks ticks-middle"></div>
+						<div class="time-bar start end" style="background-color: #00f; left: 25%; right: 25%;"></div>
+						<div class="time-bar start" style="background-color: #f00; left: 75%; right: 0;"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>8:00 am</th>
+					<td>
+						<div class="small-ticks ticks-1"></div>
+						<div class="small-ticks ticks-2"></div>
+						<div class="large-ticks ticks-3"></div>
+						<div class="small-ticks ticks-4"></div>
+						<div class="small-ticks ticks-5"></div>
+						<div class="large-ticks ticks-middle"></div>
+						<div class="time-bar end" style="background-color: #f00; left: 0; right: 75%;"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>9:00 am</th>
+					<td>
+						<div class="small-ticks ticks-1"></div>
+						<div class="small-ticks ticks-2"></div>
+						<div class="large-ticks ticks-3"></div>
+						<div class="small-ticks ticks-4"></div>
+						<div class="small-ticks ticks-5"></div>
+						<div class="large-ticks ticks-middle"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>10:00 am</th>
+					<td>
+						<div class="small-ticks ticks-1"></div>
+						<div class="small-ticks ticks-2"></div>
+						<div class="large-ticks ticks-3"></div>
+						<div class="small-ticks ticks-4"></div>
+						<div class="small-ticks ticks-5"></div>
+						<div class="large-ticks ticks-middle"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>11:00 am</th>
+					<td>
+						<div class="small-ticks ticks-1"></div>
+						<div class="small-ticks ticks-2"></div>
+						<div class="large-ticks ticks-3"></div>
+						<div class="small-ticks ticks-4"></div>
+						<div class="small-ticks ticks-5"></div>
+						<div class="large-ticks ticks-middle"></div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="timelist">
+		<div class="timeentry" style="background-color: #55f">
+			<span class="key">CAYENNE-2345</span>
+			<span class="note">Integrated the new time-keeping feature (with Ben Gierolini)</span>
+		</div>
+		<div class="timeentry" style="background-color: #f55">
+			<span class="key">VINT</span>
+			<span class="note">Weekly status meeting</span>
+		</div>
+		<div class="timeentry" style="background-color: #0b0">
+			<input type="text" class="key" value="LF-892"/>
+			<textarea class="note">Meet up for a Whitesox game in order to settle the score.</textarea>
+		</div>
+	</div>
+</body>
+</html>

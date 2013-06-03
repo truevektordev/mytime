@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Time Logger</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="text/javascript" src="script/dojo/dojo/dojo.js" data-dojo-config="
+    packages: [
+        { name: 'mytime', location: '../../mytime' }
+    ],
+    deps: ['mytime/debug-helper'],
+    parseOnLoad: true
+  "></script>
+  <!--<script type="text/javascript" src="script/main.js"></script>-->
+</head>
+<body>
+
+    <div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget/DailyTimeWidgetView">
+        <script type="dojo/method">
+            require(["mytime/model/TimeEntry"], function(TimeEntry) {
+                dtw.timeEntryStore.put(new TimeEntry({
+                    id: "alpha",
+                    startHour: 8.5,
+                    endHour: 10,
+                    color: "blue"
+                }));
+                dtw.timeEntryStore.put(new TimeEntry({
+                    id: "beta",
+                    startHour: 11,
+                    endHour: 11.75,
+                    color: "green"
+                }));
+            });
+        </script>
+    </div>
+	
+	<div class="timelist">
+		<div class="timeentry" style="background-color: #55f">
+			<span class="key">CAYENNE-2345</span>
+			<span class="note">Integrated the new time-keeping feature (with Ben Gierolini)</span>
+		</div>
+		<div class="timeentry" style="background-color: #f55">
+			<span class="key">VINT</span>
+			<span class="note">Weekly status meeting</span>
+		</div>
+		<div class="timeentry" style="background-color: #0b0">
+			<input type="text" class="key" value="LF-892"/>
+			<textarea class="note">Meet up for a Whitesox game in order to settle the score.</textarea>
+		</div>
+	</div>
+</body>
+</html>

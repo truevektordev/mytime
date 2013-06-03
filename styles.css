@@ -1,0 +1,154 @@
+div.timegrid {
+	width: 300px;
+	font-family: sans-serif;
+	color: #666;
+}
+
+	.timegrid table {
+		width: 100%;
+		border-collapse: collapse;
+		border: 1px solid black;
+	}
+
+	.timegrid th {
+		background-color: #eee;
+		font-variant:small-caps;
+		padding: 1px 4px;
+	}
+		
+		.timegrid thead th {
+			text-align: center;
+			border-left-color: black;
+		}
+		
+		.timegrid tbody th {
+			text-align: right;
+			width: 4.2em;
+		}
+	
+	.timegrid th, .timegrid td {
+		border: 1px solid black;
+	}
+	
+	.timegrid td {
+		position: relative;
+
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+	}
+
+		.timegrid .small-ticks {
+			position: absolute;
+			height: 60%;
+			bottom: 0;
+		
+			border-left: 1px solid #eee;
+			border-right: 1px solid #eee;
+		}
+	
+		.timegrid .large-ticks {
+			position: absolute;
+			height: 100%;
+			bottom: 0;
+		
+			border-left: 1px solid #ccc;
+			border-right: 1px solid #ccc;
+		}
+	
+		.timegrid .ticks-1 {
+			left: 8.333%;
+			right: 8.333%;
+		}
+	
+		.timegrid .ticks-2 {
+			left: 16.667%;
+			right: 16.667%;
+		}
+	
+		.timegrid .ticks-3 {
+			left: 25%;
+			right: 25%;
+		}
+	
+		.timegrid .ticks-4 {
+			left: 33.333%;
+			right: 33.333%;
+		}
+	
+		.timegrid .ticks-5 {
+			left: 41.667%;
+			right: 41.667%;
+		}
+	
+		.timegrid .ticks-middle {
+			left: 50%;
+			width: 1px;
+			border-right-style: none;
+		}
+	
+		.timegrid .time-bar {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+            left: 0;
+            right: 0;
+			opacity: .7;
+			border: 2px solid black;
+			border-style: solid none;
+		}
+	
+			.timegrid .start {
+				border-left-style: solid;
+				border-top-left-radius: .4em;
+				border-bottom-left-radius: .4em;
+			}
+	
+			.timegrid .end {
+				border-right-style: solid;
+				border-top-right-radius: .4em;
+				border-bottom-right-radius: .4em;
+			}
+			
+div.timelist {
+	width: 300px;
+	font-family: sans-serif;
+	color: black;
+}
+
+	.timelist .timeentry {
+		border: 2px solid black;
+		border-radius: .4em;
+		padding: .2em .4em;
+		margin: 0 0 .1em 0;
+	}
+	
+		.timelist .timeentry span.key {
+			font-weight: bold;
+			padding-right: .2em;
+			font-size: 80%;
+		}
+	
+		.timelist .timeentry span.note {
+			font-size: 80%;
+		}
+		
+		.timelist .timeentry input.key {
+			font-weight: bold;
+		}
+	
+		.timelist .timeentry textarea.note {
+			width: 100%;
+		}
+		
+div.timegrid {
+	float: left;
+}
+
+div.timelist {
+	float: left;
+	margin-left: .5em;
+}
