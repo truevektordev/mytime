@@ -8,6 +8,13 @@ div.timegrid {
 		width: 100%;
 		border-collapse: collapse;
 		border: 1px solid black;
+
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
 	}
 
 	.timegrid th {
@@ -32,13 +39,6 @@ div.timegrid {
 	
 	.timegrid td {
 		position: relative;
-
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
 	}
 
 		.timegrid .small-ticks {

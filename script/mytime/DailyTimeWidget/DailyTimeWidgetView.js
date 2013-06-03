@@ -1,19 +1,23 @@
 define([
     "module", "dojo/_base/declare",
+    "lodash",
     "dojo/_base/lang",
     "dojo/string", "dojo/on", "dojo/query",
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style",
     "dojo/store/Memory", "dojo/store/Observable",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
+    "mytime/dateTimeUtil",
     "dojo/text!./templates/grid.html",
     "dojo/text!./templates/gridrow.html"
 ],
 function (module, declare,
+          _,
           lang,
           stringUtil, on, query,
           domConstruct, domClass, domStyle,
           MemoryStore, Observable,
           _WidgetBase, _TemplatedMixin,
+          dateTimeUtil,
           template,
           gridRowTemplate) {
 
@@ -29,7 +33,7 @@ function (module, declare,
 
         constructor: function() {
             this.timeEntryStore = new Observable(new MemoryStore());
-            this._timeslotsByTimeEntryId = {};
+            this._timeBarsByTimeEntryId = {};
         },
 
         buildRendering: function() {
@@ -75,44 +79,60 @@ function (module, declare,
             }
         },
 
-        _timeslotsByTimeEntryId: null,
+        _timeBarsByTimeEntryId: null,
 
-        _timeEntryAdded: function(timeEntry) {
-            var startHour = Math.floor(timeEntry.get("startHour"));
-            var startPercentage = timeEntry.get("startHour") - startHour;
-            startPercentage = Math.round(startPercentage * 100);
+        _calculateTimeSlotsForTimeEntry: function(timeEntry) {
+            var startHour = dateTimeUtil.beginningOfHour(timeEntry.get("startHour"));
+            var startPercentage = dateTimeUtil.percentageOfHour(timeEntry.get("startHour"));
 
-
-            var endHour = Math.floor(timeEntry.get("endHour"));
-            var endPercentage = timeEntry.get("endHour") - endHour;
-            endPercentage = Math.round(endPercentage * 100);
+            var endHour = dateTimeUtil.beginningOfHour(timeEntry.get("endHour"));
+            var endPercentage = dateTimeUtil.percentageOfHour(timeEntry.get("endHour"));
             if (endPercentage === 0) {
                 endHour--;
                 endPercentage = 100;
             }
 
+            var slots = [];
             for (var hour = startHour; hour <= endHour; hour++) {
-                var timeslot = domConstruct.create("div", {"class": "time-bar"});
-                domStyle.set(timeslot, "background-color", timeEntry.get("color"));
                 var first = (hour === startHour);
                 var last = (hour === endHour);
-
-                if (first) {
-                    domClass.add(timeslot, "start");
-                    domStyle.set(timeslot, "left", startPercentage + "%");
-                }
-                if (last) {
-                    domClass.add(timeslot, "end");
-                    domStyle.set(timeslot, "right", (100 - endPercentage) + "%");
-                }
-
-                this._timeslotsByTimeEntryId[timeEntry.get("id")] = timeslot;
-                domConstruct.place(timeslot, this._getContainerForHour(hour));
+                slots.push({
+                    hour: hour,
+                    startPercentage: first ? startPercentage : 0,
+                    endPercentage: last ? endPercentage : 100,
+                    isStart: first,
+                    isEnd: last
+                });
             }
+            return slots;
+        },
+
+        _timeEntryAdded: function(timeEntry) {
+            var timeBars = this._timeBarsByTimeEntryId[timeEntry.get("id")] = [];
+            _.forEach(this._calculateTimeSlotsForTimeEntry(timeEntry), function(slot) {
+                var timebar = domConstruct.create("div", {"class": "time-bar"});
+                domStyle.set(timebar, "background-color", timeEntry.get("color"));
+                domStyle.set(timebar, "left", slot.startPercentage + "%");
+                domStyle.set(timebar, "right", (100 - slot.endPercentage) + "%");
+
+                if (slot.isStart) {
+                    domClass.add(timebar, "start");
+                }
+                if (slot.isEnd) {
+                    domClass.add(timebar, "end");
+                }
+
+                timeBars.push(timebar);
+                domConstruct.place(timebar, this._getContainerForHour(slot.hour));
+            }, this);
         },
 
         _timeEntryRemoved: function(timeEntry) {
-
+            var timeBars = this._timeBarsByTimeEntryId[timeEntry.get("id")];
+            _.forEach(timeBars, function(timebar) {
+                domConstruct.destroy(timebar);
+            });
+            delete this._timeBarsByTimeEntryId[timeEntry.get("id")];
         },
 
         _startOrEndHourChanged: function(property, prev, value) {
