@@ -3,8 +3,8 @@ define([
     "lodash",
     "dojo/_base/lang",
     "dojo/string", "dojo/on", "dojo/query",
-    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style",
-    "dojo/store/Memory", "dojo/store/Observable",
+    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry",
+    "dojo/store/Memory", "dojo/store/Observable", "dojo/Evented",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
     "mytime/dateTimeUtil",
     "dojo/text!./templates/grid.html",
@@ -14,14 +14,14 @@ function (module, declare,
           _,
           lang,
           stringUtil, on, query,
-          domConstruct, domClass, domStyle,
-          MemoryStore, Observable,
+          domConstruct, domClass, domStyle, domGeom,
+          MemoryStore, Observable, Evented,
           _WidgetBase, _TemplatedMixin,
           dateTimeUtil,
           template,
           gridRowTemplate) {
 
-    return declare(module.id, [_WidgetBase, _TemplatedMixin], {
+    return declare(module.id, [_WidgetBase, _TemplatedMixin, Evented], {
         templateString: template,
         currentDateLabel: null,
         timeRowsContainer: null,
@@ -38,6 +38,7 @@ function (module, declare,
             this.timeEntryStore = new Observable(new MemoryStore());
             this._timeBarsByTimeEntryId = {};
             this._timeEntryWatchers = {};
+            this._dragMouseEventHandles = [];
         },
 
         buildRendering: function() {
@@ -81,9 +82,73 @@ function (module, declare,
             this.own(
                 this.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
-                this.timeEntryStore.query({}).observe(lang.hitch(this, '_timeEntryStoreListener'))
+                this.timeEntryStore.query({}).observe(lang.hitch(this, '_timeEntryStoreListener')),
+
+                on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown'))
             );
         },
+
+        _currentDrag: null,
+        _dragMouseEventHandles: null,
+
+        _mouseDown: function(e) {
+            var cell = this._getContainingCell(e.target);
+            if (cell) {
+                this._currentDrag = {
+                    startHour: this._getTimeAtPosition(e.x, cell)
+                };
+                this.emit("startDrag", this._currentDrag);
+                this._dragMouseEventHandles.push(
+                    on(this.timeRowsContainer, "mousemove", lang.hitch(this, "_mouseMove")),
+                    on(document, "mouseup", lang.hitch(this, "_mouseUp"))
+                );
+            }
+        },
+
+        _mouseMove: function(e) {
+            var cell = this._getContainingCell(e.target);
+            if (cell) {
+                this._currentDrag.endHour = this._getTimeAtPosition(e.x, cell);
+                this.emit("updateDrag", this._currentDrag);
+            }
+        },
+
+        _mouseUp: function(e) {
+            var drag = this._currentDrag;
+            this._currentDrag = null;
+            _.forEach(this._dragMouseEventHandles, function(handle) {
+                handle.remove();
+            });
+
+            var cell = this._getContainingCell(e.target);
+            if (cell) {
+                drag.endHour = this._getTimeAtPosition(e.x, cell);
+                this.emit("endDrag", drag);
+            } else {
+                this.emit("cancelDrag");
+            }
+        },
+
+        _getContainingCell: function(node) {
+            while (node && node.tagName !== "TD") {
+                node = node.parentNode;
+            }
+            // TODO and cell is within this.timeRowsContainer
+            return node;
+        },
+
+        _getTimeAtPosition: function(x, cell, roundToMinutes) {
+            var hour = this._getHourForContainer(cell);
+            var portion = this._getPercentageAtPosition(x, cell);
+            return hour + portion;
+        },
+
+        _getPercentageAtPosition: function(x, cell) {
+            var box = domGeom.position(cell);
+            x = x - box.x;
+            return x / box.w;
+        },
+
 
         _timeEntryStoreListener: function(object, removedFrom, insertedInto) {
             if (removedFrom > -1) {
