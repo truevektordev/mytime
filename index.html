@@ -16,31 +16,33 @@
 </head>
 <body>
 
-    <div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget/DailyTimeWidgetView">
-        <script type="dojo/method">
-            require(["mytime/model/TimeEntry", "dojo/on"], function(TimeEntry, on) {
-                dtw.timeEntryStore.put(new TimeEntry({
-                    id: "alpha",
-                    startHour: 8.5,
-                    endHour: 10,
-                    color: "blue"
-                }));
-                dtw.timeEntryStore.put(new TimeEntry({
-                    id: "beta",
-                    startHour: 11,
-                    endHour: 11.75,
-                    color: "green"
-                }));
-                window.a = dtw.timeEntryStore.get("alpha");
-                window.b = dtw.timeEntryStore.get("beta");
+    <div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget"></div>
 
-                on(dtw, "startDrag", function(x) { console.log("startDrag", x); });
-                on(dtw, "updateDrag", function(x) { console.log("updateDrag", x); });
-                on(dtw, "endDrag", function(x) { console.log("endDrag", x); });
-                on(dtw, "cancelDrag", function(x) { console.log("cancelDrag", x); });
-            });
-        </script>
-    </div>
+    <!--<div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget/DailyTimeWidgetView">-->
+        <!--<script type="dojo/method">-->
+            <!--require(["mytime/model/TimeEntry", "dojo/on"], function(TimeEntry, on) {-->
+                <!--dtw.timeEntryStore.put(new TimeEntry({-->
+                    <!--id: "alpha",-->
+                    <!--startHour: 8.5,-->
+                    <!--endHour: 10,-->
+                    <!--color: "blue"-->
+                <!--}));-->
+                <!--dtw.timeEntryStore.put(new TimeEntry({-->
+                    <!--id: "beta",-->
+                    <!--startHour: 11,-->
+                    <!--endHour: 11.75,-->
+                    <!--color: "green"-->
+                <!--}));-->
+                <!--window.a = dtw.timeEntryStore.get("alpha");-->
+                <!--window.b = dtw.timeEntryStore.get("beta");-->
+
+                <!--on(dtw, "startDrag", function(x) { console.log("startDrag", x); });-->
+                <!--on(dtw, "updateDrag", function(x) { console.log("updateDrag", x); });-->
+                <!--on(dtw, "endDrag", function(x) { console.log("endDrag", x); });-->
+                <!--on(dtw, "cancelDrag", function(x) { console.log("cancelDrag", x); });-->
+            <!--});-->
+        <!--</script>-->
+    <!--</div>-->
 	
 	<div class="timelist">
 		<div class="timeentry" style="background-color: #55f">

@@ -1,7 +1,22 @@
 define([
-    "module"
+    "dojo/_base/declare",
+    "dijit/_WidgetBase",
+    "mytime/DailyTimeWidget/DailyTimeWidgetView"
 ],
-function (module) {
+function (declare, _WidgetBase, View) {
 
-    return module.id;
+    return declare([_WidgetBase], {
+
+        view: null,
+
+        date: null,
+
+        buildRendering: function() {
+            this.view = new View();
+            this.domNode = this.view.domNode;
+        },
+
+
+
+    });
 });

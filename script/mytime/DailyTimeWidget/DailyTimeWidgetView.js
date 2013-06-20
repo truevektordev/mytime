@@ -1,5 +1,5 @@
 define([
-    "module", "dojo/_base/declare",
+    "dojo/_base/declare",
     "lodash",
     "dojo/_base/lang",
     "dojo/string", "dojo/on", "dojo/query",
@@ -10,7 +10,7 @@ define([
     "dojo/text!./templates/grid.html",
     "dojo/text!./templates/gridrow.html"
 ],
-function (module, declare,
+function (declare,
           _,
           lang,
           stringUtil, on, query,
@@ -21,7 +21,7 @@ function (module, declare,
           template,
           gridRowTemplate) {
 
-    return declare(module.id, [_WidgetBase, _TemplatedMixin, Evented], {
+    return declare([_WidgetBase, _TemplatedMixin, Evented], {
         templateString: template,
         currentDateLabel: null,
         timeRowsContainer: null,

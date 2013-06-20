@@ -1,8 +1,12 @@
-define(['module', 'dojo/_base/declare', 'dojo/Stateful'],
-function (module, declare, Stateful) {
+define(['dojo/_base/declare', 'dojo/Stateful'],
+function (declare, Stateful) {
     return declare([Stateful], {
-        date: new Date(),
-        timeslots: [],
-        highlightedTimeSlot: null
+        timeEntryStore: null,
+        startHour: 7,
+        endHour: 19,
+
+        constructor: function() {
+            this.timeEntryStore= new Observable(new MemoryStore());
+        }
     });
 });
