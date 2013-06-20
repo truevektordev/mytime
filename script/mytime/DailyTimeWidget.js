@@ -14,8 +14,7 @@ function (declare, _WidgetBase, View) {
         buildRendering: function() {
             this.view = new View();
             this.domNode = this.view.domNode;
-        },
-
+        }
 
 
     });

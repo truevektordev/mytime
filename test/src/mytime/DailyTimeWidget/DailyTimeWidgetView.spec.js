@@ -203,4 +203,7 @@ describe("mytime/DailyTimeWidget/DailyTimeWidgetView", function() {
         expectPosition(getBar(), 3, 25, 50, true, true);
     });
 
+    // TODO remove time entry
+    // TODO emit events
+
 });
