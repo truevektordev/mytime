@@ -68,8 +68,8 @@ function (declare, _WidgetBase, TimeEntry, setIfDifferent, View) {
         _handleChangesToTimeEntry: function(internalTimeEntry, timeEntry) {
             var startHour = this._constrainStartHour(timeEntry.startHour);
             var endHour = this._constrainEndHour(timeEntry.endHour);
-            setIfDifferent(internal, "startHour", startHour);
-            setIfDifferent(internal, "endHour", endHour);
+            setIfDifferent(internalTimeEntry, "startHour", startHour);
+            setIfDifferent(internalTimeEntry, "endHour", endHour);
         },
 
         _constrainStartHour: function(startHour) {
