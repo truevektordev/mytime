@@ -6,7 +6,7 @@ define([
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry",
     "dojo/store/Memory", "dojo/store/Observable", "dojo/Evented",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
-    "mytime/dateTimeUtil",
+    "mytime/util/DateTimeUtil",
     "dojo/text!./templates/grid.html",
     "dojo/text!./templates/gridrow.html"
 ],
@@ -17,7 +17,7 @@ function (declare,
           domConstruct, domClass, domStyle, domGeom,
           MemoryStore, Observable, Evented,
           _WidgetBase, _TemplatedMixin,
-          dateTimeUtil,
+          DateTimeUtil,
           template,
           gridRowTemplate) {
 
@@ -160,11 +160,11 @@ function (declare,
         },
 
         _calculateTimeSlotsForTimeEntry: function(timeEntry) {
-            var startHour = dateTimeUtil.beginningOfHour(timeEntry.get("startHour"));
-            var startPercentage = dateTimeUtil.percentageOfHour(timeEntry.get("startHour"));
+            var startHour = DateTimeUtil.beginningOfHour(timeEntry.get("startHour"));
+            var startPercentage = DateTimeUtil.percentageOfHour(timeEntry.get("startHour"));
 
-            var endHour = dateTimeUtil.beginningOfHour(timeEntry.get("endHour"));
-            var endPercentage = dateTimeUtil.percentageOfHour(timeEntry.get("endHour"));
+            var endHour = DateTimeUtil.beginningOfHour(timeEntry.get("endHour"));
+            var endPercentage = DateTimeUtil.percentageOfHour(timeEntry.get("endHour"));
             if (endPercentage === 0) {
                 endHour--;
                 endPercentage = 100;

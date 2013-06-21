@@ -1,0 +1,3 @@
+"date" is string representation of a calendar date with format "yyyy-mm-dd"
+"hour" is a number with 0 being midnight and 14 being 2pm. The fractional portion of is the fraction
+    of the hour. For example 10.5 is 10:30AM.
