@@ -19,6 +19,10 @@ function (declare, _WidgetBase, TimeEntry, setIfDifferent, View) {
 
         _view: null,
 
+        _setTimeEntryStoreAttr: function() {
+
+        },
+
         buildRendering: function() {
             this._view = new View();
             this.domNode = this._view.domNode;

@@ -4,9 +4,9 @@ define([
     "dojo/_base/lang",
     "dojo/string", "dojo/on", "dojo/query",
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry",
-    "dojo/store/Memory", "dojo/store/Observable", "dojo/Evented",
+    "dojo/Evented",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
-    "mytime/util/DateTimeUtil",
+    "mytime/util/DateTimeUtil", "mytime/util/EnhancedMemoryStore",
     "dojo/text!./templates/grid.html",
     "dojo/text!./templates/gridrow.html"
 ],
@@ -15,9 +15,9 @@ function (declare,
           lang,
           stringUtil, on, query,
           domConstruct, domClass, domStyle, domGeom,
-          MemoryStore, Observable, Evented,
+          Evented,
           _WidgetBase, _TemplatedMixin,
-          DateTimeUtil,
+          DateTimeUtil, EnhancedMemoryStore,
           template,
           gridRowTemplate) {
 
@@ -35,7 +35,7 @@ function (declare,
         _timeEntryWatchers: null,
 
         constructor: function() {
-            this.timeEntryStore = new Observable(new MemoryStore());
+            this.timeEntryStore = EnhancedMemoryStore.createObservable();
             this._timeBarsByTimeEntryId = {};
             this._timeEntryWatchers = {};
             this._dragMouseEventHandles = [];
@@ -82,7 +82,7 @@ function (declare,
             this.own(
                 this.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
-                this.timeEntryStore.query({}).observe(lang.hitch(this, '_timeEntryStoreListener')),
+                this.timeEntryStore.observe(lang.hitch(this, '_timeEntryStoreListener')),
 
                 on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown'))
             );
