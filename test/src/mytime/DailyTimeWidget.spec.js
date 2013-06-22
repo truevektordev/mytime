@@ -7,10 +7,19 @@ describe("mytime/DailyTimeWidget", function() {
 
     var widget, store, internalStore;
 
-    function createBasicWidget() {
+    function initStore() {
         store = new Observable(new MemoryStore());
-        widget = new DailyTimeWidget({date: "2010-10-10", startHour: 10, endHour: 15, timeEntryStore: store});
+    }
+
+    function initWidget(widgetParams) {
+        widgetParams = widgetParams || {date: "2010-10-10", startHour: 10, endHour: 15, timeEntryStore: store};
+        widget = new DailyTimeWidget(widgetParams);
         internalStore = widget._view.timeEntryStore;
+    }
+
+    function createBasicWidget() {
+        initStore();
+        initWidget();
     }
 
     function createTimeEntry(id, date, startHour, endHour, color) {
@@ -28,24 +37,22 @@ describe("mytime/DailyTimeWidget", function() {
             timeEntry = createTimeEntry.apply(this, arguments);
         }
         store.put(timeEntry);
-        widget._handleTimeEntryAdded(timeEntry);
     }
 
     function remove(timeEntry) {
         if (typeof timeEntry === "string") {
             timeEntry = createTimeEntry.apply(this, arguments);
         }
-        store.remove(timeEntry);
-        widget._handleTimeEntryRemoved(timeEntry);
+        store.remove(timeEntry.id);
     }
 
     function update(id, date, startHour, endHour, color) {
-        var entry = store.get(id);
-        if (date != null) entry.set("date", date);
-        if (startHour != null) entry.set("startHour", startHour);
-        if (endHour != null) entry.set("endHour", endHour);
-        if (color != null) entry.set("color", color);
-        widget._handleTimeEntryModified(entry);
+        var timeEntry = store.get(id);
+        if (date != null) timeEntry.set("date", date);
+        if (startHour != null) timeEntry.set("startHour", startHour);
+        if (endHour != null) timeEntry.set("endHour", endHour);
+        if (color != null) timeEntry.set("color", color);
+        store.put(timeEntry);
     }
 
     function expectDisplayed() {
@@ -168,5 +175,55 @@ describe("mytime/DailyTimeWidget", function() {
         expectDisplayed();
     });
 
+    it("loads entries from a store initially", function() {
+        initStore();
+        add("a", "2010-10-9", 8, 12);
+        add("b", "2010-10-10", 9, 12);
+        add("c", "2010-10-10", 12.5, 15);
+        add("d", "2010-10-10", 15, 17);
+        add("e", "2010-10-11", 12, 14);
+        initWidget();
 
+        expectDisplayed(["b", 10, 12],
+                        ["c", 12.5, 15],
+                        ["d", 15, 16]);
+    });
+
+    it("can have store set before date", function() {
+        initStore();
+        add("a", "2010-10-9", 8, 12);
+        add("b", "2010-10-10", 9, 12);
+        add("c", "2010-10-10", 12.5, 15);
+        add("d", "2010-10-10", 15, 17);
+        add("e", "2010-10-11", 12, 14);
+        initWidget({startHour: 10, endHour: 15});
+
+        widget.set("timeEntryStore", store);
+        expectDisplayed();
+
+        widget.set("date", "2010-10-10");
+        expectDisplayed(["b", 10, 12],
+                        ["c", 12.5, 15],
+                        ["d", 15, 16]);
+    });
+
+    it("can have date set before store", function() {
+        initStore();
+        add("a", "2010-10-9", 8, 12);
+        add("b", "2010-10-10", 9, 12);
+        add("c", "2010-10-10", 12.5, 15);
+        add("d", "2010-10-10", 15, 17);
+        add("e", "2010-10-11", 12, 14);
+        initWidget({startHour: 10, endHour: 15});
+
+        widget.set("date", "2010-10-10");
+        expectDisplayed();
+
+        widget.set("timeEntryStore", store);
+        expectDisplayed(["b", 10, 12],
+            ["c", 12.5, 15],
+            ["d", 15, 16]);
+    });
+
+    // TODO test set startHour, endHour
 });

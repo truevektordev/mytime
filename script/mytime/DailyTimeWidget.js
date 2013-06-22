@@ -1,11 +1,12 @@
 define([
-    "dojo/_base/declare",
+    "lodash",
+    "dojo/_base/declare", "dojo/_base/lang",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
     "mytime/util/setIfDifferent",
     "mytime/DailyTimeWidget/DailyTimeWidgetView"
 ],
-function (declare, _WidgetBase, TimeEntry, setIfDifferent, View) {
+function (_, declare, lang, _WidgetBase, TimeEntry, setIfDifferent, View) {
 
     return declare([_WidgetBase], {
 
@@ -19,8 +20,72 @@ function (declare, _WidgetBase, TimeEntry, setIfDifferent, View) {
 
         _view: null,
 
-        _setTimeEntryStoreAttr: function() {
+        _queryResults: null,
+        _timeEntryStoreObserverHandle: null,
 
+        _setTimeEntryStoreAttr: function(store) {
+            if (store !== this.timeEntryStore || !this._isStoreRegistered()) {
+                this.timeEntryStore = store;
+                if (this.date) {
+                    this._registerStore(store);
+                }
+            }
+        },
+
+        _setDateAttr: function(date) {
+            if (date !== this.date) {
+                this.date = date;
+                if (this.timeEntryStore) {
+                    // re-register the store with the new date for the query.
+                    this._registerStore(this.timeEntryStore);
+                }
+            }
+        },
+
+        _setStartHourAttr: function(startHour) {
+            if (startHour !== this.startHour) {
+                this.startHour = startHour;
+                this._view.startHour = startHour;
+                this._refreshView();
+            }
+        },
+
+        _setEndHourAttr: function(endHour) {
+            if (endHour !== this.endHour) {
+                this.endHour = endHour;
+                this._view.endHour = endHour;
+                this._refreshView();
+            }
+        },
+
+        _isStoreRegistered: function() {
+            return this._timeEntryStoreObserverHandle != null;
+        },
+
+        _registerStore: function(store) {
+            if (this._isStoreRegistered()) {
+                this._timeEntryStoreObserverHandle.remove();
+            }
+            this._queryResults = store.query({date: this.date});
+            this._timeEntryStoreObserverHandle = this._queryResults.observe(lang.hitch(this, "_timeEntryStoreListener"), true);
+            this._refreshView();
+        },
+
+        _refreshView: function() {
+            this._view.timeEntryStore.clear();
+            if (this._queryResults) {
+                _.forEach(this._queryResults, lang.hitch(this, "_handleTimeEntryAdded"));
+            }
+        },
+
+        _timeEntryStoreListener: function(timeEntry, removedFrom, insertedInto) {
+            if (removedFrom === -1) {
+                this._handleTimeEntryAdded(timeEntry);
+            } else if (insertedInto === -1) {
+                this._handleTimeEntryRemoved(timeEntry);
+            } else if (removedFrom === insertedInto) {
+                this._handleTimeEntryModified(timeEntry);
+            }
         },
 
         buildRendering: function() {
