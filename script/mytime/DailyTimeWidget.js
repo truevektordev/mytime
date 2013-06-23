@@ -65,9 +65,12 @@ function (_, declare, lang, _WidgetBase, TimeEntry, setIfDifferent, View) {
         _registerStore: function(store) {
             if (this._isStoreRegistered()) {
                 this._timeEntryStoreObserverHandle.remove();
+                this._queryResults = null;
             }
-            this._queryResults = store.query({date: this.date});
-            this._timeEntryStoreObserverHandle = this._queryResults.observe(lang.hitch(this, "_timeEntryStoreListener"), true);
+            if (store) {
+                this._queryResults = store.query({date: this.date});
+                this._timeEntryStoreObserverHandle = this._queryResults.observe(lang.hitch(this, "_timeEntryStoreListener"), true);
+            }
             this._refreshView();
         },
 

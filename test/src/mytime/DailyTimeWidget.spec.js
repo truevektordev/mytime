@@ -221,8 +221,32 @@ describe("mytime/DailyTimeWidget", function() {
 
         widget.set("timeEntryStore", store);
         expectDisplayed(["b", 10, 12],
-            ["c", 12.5, 15],
-            ["d", 15, 16]);
+                        ["c", 12.5, 15],
+                        ["d", 15, 16]);
+    });
+
+    it("can unset date", function() {
+        createBasicWidget();
+        add("a", "2010-10-10", 10, 12);
+
+        widget.set("date", null);
+        widget.set("timeEntryStore", null);
+
+        add("b", "2010-10-10", 12, 14);
+
+        expectDisplayed();
+    });
+
+    it("can unset timeEntryStore", function() {
+        createBasicWidget();
+        add("a", "2010-10-10", 10, 12);
+
+        widget.set("timeEntryStore", null);
+        widget.set("date", null);
+
+        add("b", "2010-10-10", 12, 14);
+
+        expectDisplayed();
     });
 
     // TODO test set startHour, endHour

@@ -15,33 +15,8 @@
 </head>
 <body>
 
-    <div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget"></div>
-
-    <!--<div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget/DailyTimeWidgetView">-->
-        <!--<script type="dojo/method">-->
-            <!--require(["mytime/model/TimeEntry", "dojo/on"], function(TimeEntry, on) {-->
-                <!--dtw.timeEntryStore.put(new TimeEntry({-->
-                    <!--id: "alpha",-->
-                    <!--startHour: 8.5,-->
-                    <!--endHour: 10,-->
-                    <!--color: "blue"-->
-                <!--}));-->
-                <!--dtw.timeEntryStore.put(new TimeEntry({-->
-                    <!--id: "beta",-->
-                    <!--startHour: 11,-->
-                    <!--endHour: 11.75,-->
-                    <!--color: "green"-->
-                <!--}));-->
-                <!--window.a = dtw.timeEntryStore.get("alpha");-->
-                <!--window.b = dtw.timeEntryStore.get("beta");-->
-
-                <!--on(dtw, "startDrag", function(x) { console.log("startDrag", x); });-->
-                <!--on(dtw, "updateDrag", function(x) { console.log("updateDrag", x); });-->
-                <!--on(dtw, "endDrag", function(x) { console.log("endDrag", x); });-->
-                <!--on(dtw, "cancelDrag", function(x) { console.log("cancelDrag", x); });-->
-            <!--});-->
-        <!--</script>-->
-    <!--</div>-->
+    <div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget"
+                            data-dojo-props="date: '2010-10-10'"></div>
 	
 	<div class="timelist">
 		<div class="timeentry" style="background-color: #55f">
@@ -57,5 +32,38 @@
 			<textarea class="note">Meet up for a Whitesox game in order to settle the score.</textarea>
 		</div>
 	</div>
+
+    <script>
+        require(["dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on",
+                 "mytime/util/EnhancedMemoryStore", "mytime/persistence/ImporterExporter"],
+        function(ready, dom, domAttr, on, EnhancedMemoryStore, ImporterExporter) {
+            ready(function() {
+                window.store = EnhancedMemoryStore.createObservable();
+                importTextArea();
+                dtw.set("timeEntryStore", window.store);
+                on(dom.byId("import"), "click", importTextArea);
+                on(dom.byId("export"), "click", exportTextArea);
+            });
+
+            function importTextArea() {
+                var importString = domAttr.get("persistenceTextArea", "value");
+                new ImporterExporter().importStringToStore(importString, window.store);
+            }
+
+            function exportTextArea() {
+                var exportString = new ImporterExporter().exportStoreToString(window.store);
+                domAttr.set("persistenceTextArea", "value", exportString);
+            }
+        });
+    </script>
+
+    <textarea id="persistenceTextArea" rows="15" cols="80">
+[
+{ "id": "a", "date": "2010-10-10", "startHour": 10, "endHour": 12 },
+{ "id": "b", "date": "2010-10-10", "startHour": 12.5, "endHour": 14 }
+]
+    </textarea>
+    <button id="import">Import</button>
+    <button id="export">Export</button>
 </body>
 </html>
