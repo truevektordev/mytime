@@ -16,7 +16,7 @@ describe("mytime/util/SingleDayFilteringTimeEntryStore", function() {
         store = new SingleDayFilteringTimeEntryStore(widgetParams);
     }
 
-    function createBasicWidget() {
+    function setupStandardStore() {
         initSourceStore();
         initStore();
     }
@@ -31,21 +31,21 @@ describe("mytime/util/SingleDayFilteringTimeEntryStore", function() {
         });
     }
 
-    function add(timeEntry) {
+    function addToSource(timeEntry) {
         if (typeof timeEntry === "string") {
             timeEntry = createTimeEntry.apply(this, arguments);
         }
         sourceStore.put(timeEntry);
     }
 
-    function remove(timeEntry) {
+    function removeFromSource(timeEntry) {
         if (typeof timeEntry === "string") {
             timeEntry = createTimeEntry.apply(this, arguments);
         }
         sourceStore.remove(timeEntry.id);
     }
 
-    function update(id, date, startHour, endHour, color) {
+    function updateInSource(id, date, startHour, endHour, color) {
         var timeEntry = sourceStore.get(id);
         if (date != null) timeEntry.set("date", date);
         if (startHour != null) timeEntry.set("startHour", startHour);
@@ -54,7 +54,7 @@ describe("mytime/util/SingleDayFilteringTimeEntryStore", function() {
         sourceStore.put(timeEntry);
     }
 
-    function expectDisplayed() {
+    function expectData() {
         expect(store.query().length).toBe(arguments.length);
 
         for(var i = 0; i < arguments.length; i++) {
@@ -77,175 +77,175 @@ describe("mytime/util/SingleDayFilteringTimeEntryStore", function() {
     }
 
     it("starts out empty", function() {
-        createBasicWidget();
-        expectDisplayed();
+        setupStandardStore();
+        expectData();
     });
 
     it("displays an entry in the middle", function() {
-        createBasicWidget();
-        add(createTimeEntry("a", "2010-10-10", 12, 14));
-        expectDisplayed(["a", 12, 14]);
+        setupStandardStore();
+        addToSource(createTimeEntry("a", "2010-10-10", 12, 14));
+        expectData(["a", 12, 14]);
     });
 
     it("displays an entry at the beginning and end", function() {
-        createBasicWidget();
-        add(createTimeEntry("a", "2010-10-10", 10, 12.5));
-        add(createTimeEntry("b", "2010-10-10", 13.25, 16));
-        expectDisplayed(["a", 10, 12.5],
+        setupStandardStore();
+        addToSource(createTimeEntry("a", "2010-10-10", 10, 12.5));
+        addToSource(createTimeEntry("b", "2010-10-10", 13.25, 16));
+        expectData(["a", 10, 12.5],
             ["b", 13.25, 16]);
     });
 
     it("clips overflowing entries within bounds", function() {
-        createBasicWidget();
-        add(createTimeEntry("a", "2010-10-10", 9, 12.5));
-        add(createTimeEntry("b", "2010-10-10", 13.25, 16.25));
-        expectDisplayed(["a", 10, 12.5],
+        setupStandardStore();
+        addToSource(createTimeEntry("a", "2010-10-10", 9, 12.5));
+        addToSource(createTimeEntry("b", "2010-10-10", 13.25, 16.25));
+        expectData(["a", 10, 12.5],
             ["b", 13.25, 16]);
     });
 
     it("ignores items outside of bounds", function() {
-        createBasicWidget();
-        add(createTimeEntry("a", "2010-10-10", 2, 8));
-        add(createTimeEntry("b", "2010-10-10", 8, 10));
-        add(createTimeEntry("c", "2010-10-10", 16, 18));
-        add(createTimeEntry("d", "2010-10-10", 18, 24));
-        expectDisplayed();
+        setupStandardStore();
+        addToSource(createTimeEntry("a", "2010-10-10", 2, 8));
+        addToSource(createTimeEntry("b", "2010-10-10", 8, 10));
+        addToSource(createTimeEntry("c", "2010-10-10", 16, 18));
+        addToSource(createTimeEntry("d", "2010-10-10", 18, 24));
+        expectData();
     });
 
     it("ignores items with wrong date", function() {
-        createBasicWidget();
-        add(createTimeEntry("a", "2010-10-9", 10, 12.5));
-        add(createTimeEntry("b", "2010-10-11", 12, 13));
-        add(createTimeEntry("c", "2014-10-10", 13.25, 17));
-        expectDisplayed();
+        setupStandardStore();
+        addToSource(createTimeEntry("a", "2010-10-9", 10, 12.5));
+        addToSource(createTimeEntry("b", "2010-10-11", 12, 13));
+        addToSource(createTimeEntry("c", "2014-10-10", 13.25, 17));
+        expectData();
     });
 
     it("removes items", function() {
-        createBasicWidget();
-        add("beginning", "2010-10-10", 10, 12.5);
-        add("middle", "2010-10-10", 12, 13);
-        add("end", "2010-10-10", 13.25, 17);
-        add("remains", "2010-10-10", 13, 14);
+        setupStandardStore();
+        addToSource("beginning", "2010-10-10", 10, 12.5);
+        addToSource("middle", "2010-10-10", 12, 13);
+        addToSource("end", "2010-10-10", 13.25, 17);
+        addToSource("remains", "2010-10-10", 13, 14);
 
-        remove("beginning", "2010-10-10", 10, 12.5);
-        remove("middle", "2010-10-10", 12, 13);
-        remove("end", "2010-10-10", 13.25, 17);
-        expectDisplayed(["remains", 13, 14]);
+        removeFromSource("beginning", "2010-10-10", 10, 12.5);
+        removeFromSource("middle", "2010-10-10", 12, 13);
+        removeFromSource("end", "2010-10-10", 13.25, 17);
+        expectData(["remains", 13, 14]);
     });
 
     it("modifies a moved entry", function() {
-        createBasicWidget();
-        add("a", "2010-10-10", 10, 12.5);
-        update("a", null, 11);
-        expectDisplayed(["a", 11, 12.5]);
-        update("a", null, null, 11.5);
-        expectDisplayed(["a", 11, 11.5]);
+        setupStandardStore();
+        addToSource("a", "2010-10-10", 10, 12.5);
+        updateInSource("a", null, 11);
+        expectData(["a", 11, 12.5]);
+        updateInSource("a", null, null, 11.5);
+        expectData(["a", 11, 11.5]);
     });
 
     it("modifies a moved entry and constrains to bounds", function() {
-        createBasicWidget();
-        add("a", "2010-10-10", 10, 12.5);
-        update("a", null, 3);
-        expectDisplayed(["a", 10, 12.5]);
-        update("a", null, null, 20);
-        expectDisplayed(["a", 10, 16]);
+        setupStandardStore();
+        addToSource("a", "2010-10-10", 10, 12.5);
+        updateInSource("a", null, 3);
+        expectData(["a", 10, 12.5]);
+        updateInSource("a", null, null, 20);
+        expectData(["a", 10, 16]);
     });
 
     it("adds item when moves into range", function() {
-        createBasicWidget();
-        add("wrong-hour", "2010-10-10", 2, 3);
-        add("wrong-day", "2010-10-9", 10, 12.5);
+        setupStandardStore();
+        addToSource("wrong-hour", "2010-10-10", 2, 3);
+        addToSource("wrong-day", "2010-10-9", 10, 12.5);
 
-        update("wrong-hour", null, 11, 14);
-        update("wrong-day", "2010-10-10");
+        updateInSource("wrong-hour", null, 11, 14);
+        updateInSource("wrong-day", "2010-10-10");
 
-        expectDisplayed(["wrong-hour", 11, 14],
+        expectData(["wrong-hour", 11, 14],
             ["wrong-day", 10, 12.5]);
     });
 
     it("removes item when moves out of range", function() {
-        createBasicWidget();
-        add("wrong-hour", "2010-10-10", 12, 33);
-        add("wrong-day", "2010-10-10", 10, 12.5);
+        setupStandardStore();
+        addToSource("wrong-hour", "2010-10-10", 12, 33);
+        addToSource("wrong-day", "2010-10-10", 10, 12.5);
 
-        update("wrong-hour", null, 3, 4);
-        update("wrong-day", "2010-10-11");
+        updateInSource("wrong-hour", null, 3, 4);
+        updateInSource("wrong-day", "2010-10-11");
 
-        expectDisplayed();
+        expectData();
     });
 
     it("loads entries from a store initially", function() {
         initSourceStore();
-        add("a", "2010-10-9", 8, 12);
-        add("b", "2010-10-10", 9, 12);
-        add("c", "2010-10-10", 12.5, 15);
-        add("d", "2010-10-10", 15, 17);
-        add("e", "2010-10-11", 12, 14);
+        addToSource("a", "2010-10-9", 8, 12);
+        addToSource("b", "2010-10-10", 9, 12);
+        addToSource("c", "2010-10-10", 12.5, 15);
+        addToSource("d", "2010-10-10", 15, 17);
+        addToSource("e", "2010-10-11", 12, 14);
         initStore();
 
-        expectDisplayed(["b", 10, 12],
+        expectData(["b", 10, 12],
             ["c", 12.5, 15],
             ["d", 15, 16]);
     });
 
     it("can have source store set before date", function() {
         initSourceStore();
-        add("a", "2010-10-9", 8, 12);
-        add("b", "2010-10-10", 9, 12);
-        add("c", "2010-10-10", 12.5, 15);
-        add("d", "2010-10-10", 15, 17);
-        add("e", "2010-10-11", 12, 14);
+        addToSource("a", "2010-10-9", 8, 12);
+        addToSource("b", "2010-10-10", 9, 12);
+        addToSource("c", "2010-10-10", 12.5, 15);
+        addToSource("d", "2010-10-10", 15, 17);
+        addToSource("e", "2010-10-11", 12, 14);
         initStore({startHour: 10, endHour: 15});
 
         store.set("sourceStore", sourceStore);
-        expectDisplayed();
+        expectData();
 
         store.set("date", "2010-10-10");
-        expectDisplayed(["b", 10, 12],
+        expectData(["b", 10, 12],
             ["c", 12.5, 15],
             ["d", 15, 16]);
     });
 
     it("can have date set before source store", function() {
         initSourceStore();
-        add("a", "2010-10-9", 8, 12);
-        add("b", "2010-10-10", 9, 12);
-        add("c", "2010-10-10", 12.5, 15);
-        add("d", "2010-10-10", 15, 17);
-        add("e", "2010-10-11", 12, 14);
+        addToSource("a", "2010-10-9", 8, 12);
+        addToSource("b", "2010-10-10", 9, 12);
+        addToSource("c", "2010-10-10", 12.5, 15);
+        addToSource("d", "2010-10-10", 15, 17);
+        addToSource("e", "2010-10-11", 12, 14);
         initStore({startHour: 10, endHour: 15});
 
         store.set("date", "2010-10-10");
-        expectDisplayed();
+        expectData();
 
         store.set("sourceStore", sourceStore);
-        expectDisplayed(["b", 10, 12],
+        expectData(["b", 10, 12],
             ["c", 12.5, 15],
             ["d", 15, 16]);
     });
 
     it("can unset date", function() {
-        createBasicWidget();
-        add("a", "2010-10-10", 10, 12);
+        setupStandardStore();
+        addToSource("a", "2010-10-10", 10, 12);
 
         store.set("date", null);
         store.set("timeEntryStore", null);
 
-        add("b", "2010-10-10", 12, 14);
+        addToSource("b", "2010-10-10", 12, 14);
 
-        expectDisplayed();
+        expectData();
     });
 
-    it("can unset timeEntryStore", function() {
-        createBasicWidget();
-        add("a", "2010-10-10", 10, 12);
+    it("can unset sourceStore", function() {
+        setupStandardStore();
+        addToSource("a", "2010-10-10", 10, 12);
 
-        store.set("timeEntryStore", null);
+        store.set("sourceStore", null);
         store.set("date", null);
 
-        add("b", "2010-10-10", 12, 14);
+        addToSource("b", "2010-10-10", 12, 14);
 
-        expectDisplayed();
+        expectData();
     });
 
     // TODO test set startHour, endHour

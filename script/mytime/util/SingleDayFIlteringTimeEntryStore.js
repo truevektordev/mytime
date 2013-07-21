@@ -42,7 +42,7 @@ function (_, declare, lang, EnhancedMemoryStore, TimeEntry, setIfDifferent) {
         },
 
         _sourceStoreSetter: function(store) {
-            if (store !== this.sourceStore || !this._isStoreRegistered()) {
+            if (store !== this.sourceStore || !this._isSourceStoreRegistered()) {
                 this.sourceStore = store;
                 if (this.date) {
                     this._registerSourceStore(store);
