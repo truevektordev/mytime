@@ -64,7 +64,7 @@ describe("mytime/DailyTimeWidget", function() {
                 id: arg[0],
                 startHour: arg[1],
                 endHour: arg[2],
-                color: arg[3] || "blue"
+                color: arg[3]
             };
 
             var actual = internalStore.get(arg.id);

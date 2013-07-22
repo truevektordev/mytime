@@ -248,5 +248,16 @@ describe("mytime/util/SingleDayFilteringTimeEntryStore", function() {
         expectData();
     });
 
+    it("preserves color", function() {
+        setupStandardStore();
+        addToSource("a", "2010-10-10", 9, 12, "red");
+        addToSource("b", "2010-10-10", 12, 14, "green");
+        addToSource("c", "2010-10-10", 14, 17, "blue");
+
+        expectData(["a", 10, 12, "red"],
+                   ["b", 12, 14, "green"],
+                   ["c", 14, 16, "blue"]);
+    });
+
     // TODO test set startHour, endHour
 });
