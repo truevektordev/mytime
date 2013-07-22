@@ -1,11 +1,10 @@
 define([
     "lodash",
     "dojo/_base/declare", "dojo/_base/lang",
-    "mytime/util/EnhancedMemoryStore",
-    "mytime/model/TimeEntry",
-    "mytime/util/setIfDifferent"
+    "mytime/util/EnhancedMemoryStore", "mytime/util/_StatefulSettersMixin", "mytime/util/setIfDifferent",
+    "mytime/model/TimeEntry"
 ],
-function (_, declare, lang, EnhancedMemoryStore, TimeEntry, setIfDifferent) {
+function (_, declare, lang, EnhancedMemoryStore, _StatefulSettersMixin, setIfDifferent, TimeEntry) {
 
     /**
      * A read-only store that provides a filtered view of another store containing time entries. It only includes time
@@ -13,7 +12,7 @@ function (_, declare, lang, EnhancedMemoryStore, TimeEntry, setIfDifferent) {
      * entry is partially within the start and end hours, the store will contain a version of the time entry that has
      * start and end hour indicating only the portion of the time entry that falls within the specified bounds.
      */
-    return declare([EnhancedMemoryStore], {
+    return declare([EnhancedMemoryStore, _StatefulSettersMixin], {
 
         date: null,
 
@@ -25,21 +24,6 @@ function (_, declare, lang, EnhancedMemoryStore, TimeEntry, setIfDifferent) {
 
         _queryResults: null,
         _sourceStoreObserverHandle: null,
-
-        set: function(prop, value) {
-            var setter = this["_" + prop + "Setter"];
-            if (typeof setter === "function") {
-                return setter.call(this, value);
-            } else {
-                this[prop] = value;
-            }
-        },
-
-        postscript: function(params) {
-            _.forOwn(params, lang.hitch(this, function(value, key) {
-                this.set(key, value);
-            }));
-        },
 
         _sourceStoreSetter: function(store) {
             if (store !== this.sourceStore || !this._isSourceStoreRegistered()) {
