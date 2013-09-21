@@ -1,4 +1,5 @@
 var IS_OPEN_AIR = location.href.match(/openair/) ? true : false;
+var IS_CLARIZEN = location.href.match(/clarizen/) ? true : false;
 
 /*
 EX: {
@@ -12,11 +13,11 @@ EX: {
  */
 var myTimeData = null;
 var myTimeRow = null; //Needed for Open Air
-var ORDER_OF_DAYS = ['S', 'U', 'M', 'T', 'W', 'R', 'F'];
+var ORDER_OF_DAYS = ['M', 'T', 'W', 'R', 'F', 'S', 'U'];
 
 (function() {
 var mainDiv = document.createElement('div');
-mainDiv.setAttribute("style", "position: fixed; top: 0px; right: 2px; border: 1px solid red; background-color: silver;");
+mainDiv.setAttribute("style", "position: fixed; top: 0px; right: 2px; border: 1px solid red; background-color: silver; z-index: 1000");
 
 mainDiv.innerHTML =
 '<textarea onkeyup="parseText(this)" cols="12" rows="1"></textarea><div id="myTimeButtons"><button onclick="myTimeFill()">Clear Row</button></div>'
@@ -43,7 +44,7 @@ function parseText(textarea) {
 	var text = textarea.value;
 
 	var rawData = text.split('\n');
-	for (var i in rawData) {
+	for (var i = 0; i < rawData.length; i++) {
 		rawData[i] = rawData[i].split('\t');
 	}
     var rowCount = rawData.length;
@@ -157,46 +158,60 @@ function makeButtons(data) {
  * Apply pre-parsed data to a row in the timesheet.
  */
 function myTimeFill(task) {
-    var selectedRowName = getSelectedRowName();
-	if (!selectedRowName)
-		return;
-	
 	if (task) {
 		var taskData = myTimeData[task];
-        for (var columnIndex = 1; columnIndex <= 7; columnIndex++) {
-            var dayId = ORDER_OF_DAYS[columnIndex - 1];
+        for (var columnIndex = 0; columnIndex < 7; columnIndex++) {
+            var dayId = ORDER_OF_DAYS[columnIndex];
             var entry = taskData[dayId];
             if (entry) {
-                setCell(selectedRowName, columnIndex, entry.time, entry.notes);
+                setCell(columnIndex, entry.time, entry.notes);
             } else {
-                clearCell(selectedRowName, columnIndex);
+                clearCell(columnIndex);
             }
         }
 	} else {
-		for (var columnIndex = 1; columnIndex <= 7; columnIndex++) {
-			clearCell(selectedRowName, columnIndex);
+		for (var columnIndex = 0; columnIndex < 7; columnIndex++) {
+			clearCell(columnIndex);
 		}
 	}
 }
 
-function getSelectedRowName() {
-    var rows = document.getElementById('tblGrid').rows;
-    var selectedRowName;
-    for (var i = 0; i < rows.length; i++) {
-        var styleAttr = rows[i].cells[0].getAttribute('style');
-        if (styleAttr && styleAttr.match(/images\/shade\.gif/)) {
-            selectedRowName = rows[i].id.substr(3);
-            break;
-        }
+function clearCell(columnIndex) {
+    setCell(columnIndex, '', '');
+}
+
+var queue = [];
+function queueCallback() {
+    var fn = queue.shift();
+    if (fn) {
+        queue.inProgress = true;
+        fn();
+    } else {
+        queue.inProgress = false;
     }
-    return selectedRowName;
 }
 
-function clearCell(selectedRowName, columnIndex) {
-    setCell(selectedRowName, columnIndex, '', null);
+function setCell(columnIndex, time, notes) {
+    if (IS_CLARIZEN) {
+        queue.push(function() {
+            setCell_clarizen(columnIndex, time, notes, queueCallback);
+        });
+        if (!queue.inProgress) {
+            queueCallback();
+        }
+    } else {
+        setCell_bigtime(columnIndex, time, notes)
+    }
 }
 
-function setCell(selectedRowName, columnIndex, time, notes) {
+function setCell_bigtime(columnIndex, time, notes) {
+    var selectedRowName = getSelectedRowName();
+    if (!selectedRowName)
+        return;
+
+    // Adjust to start at 1.
+    columnIndex = columnIndex + 1;
+
     var notesNode = document.getElementsByName('Notes')[0];
 
     var name = 'TSRowList.' + selectedRowName + '.' + columnIndex + '.Hours_IN';
@@ -215,5 +230,43 @@ function setCell(selectedRowName, columnIndex, time, notes) {
         notesNode.value = notes;
         timeNode.focus();
     }
+}
+
+function getSelectedRowName() {
+    var rows = document.getElementById('tblGrid').rows;
+    var selectedRowName;
+    for (var i = 0; i < rows.length; i++) {
+        var styleAttr = rows[i].cells[0].getAttribute('style');
+        if (styleAttr && styleAttr.match(/images\/shade\.gif/)) {
+            selectedRowName = rows[i].id.substr(3);
+            break;
+        }
+    }
+    return selectedRowName;
+}
+
+
+
+function setCell_clarizen(columnIndex, time, notes, callback) {
+
+    var table = frames[0].document.getElementById('gridTable_ctl00_CPH1_MasterGridView_grid_irows');
+    var row = table.querySelector('tr[style^="background-color"]');
+    var cell = row.cells[columnIndex + 5];
+
+    var event = { target: cell };
+    table.ondblclick(event); // This sets the focus on the cell.
+
+    frames[0].irows.get_grid('ctl00_CPH1_MasterGridView_grid_irows').openEditor(null);
+
+    var timeInput = frames[0].document.getElementById('irows_timesheet_duration_editor');
+    var commentInput = frames[0].document.getElementById('irows_timesheet_comment_editor');
+    var okButton = commentInput.parentElement.querySelectorAll('button')[1];
+
+    timeInput.value = time;
+    commentInput.value = notes;
+    setTimeout(function() {
+        okButton.onclick();
+        setTimeout(callback, 300);
+    }, 300);
 }
 
