@@ -23,6 +23,14 @@ function (exports) {
         return Math.round(percentage * 100);
     };
 
+    exports.roundToFifteenMinutes = function(time) {
+        return Math.round(time * 4) / 4;
+    };
+
+    exports.roundToFiveMinutes = function(time) {
+        return Math.round(time * 12) / 12;
+    };
+
     /**
      * Convert the given JavaScript Date object to a date string as used to store dates in this
      * application (that is "yyyy-mm-dd").
@@ -43,11 +51,42 @@ function (exports) {
         return year + "-" + month + "-" + day;
     };
 
+    exports.convertDateStringToDateObject = function(dateString) {
+        var parts = dateString.split('-');
+        var MIDDLE_OF_DAY = 12;
+        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), MIDDLE_OF_DAY);
+    };
+
     /**
      * Get the current date in the standard format for this application.
      * @returns {string}
      */
     exports.getCurrentDate = function() {
         return exports.convertDateObjectToDateString(new Date());
+    };
+
+    exports.numberToStringWithNth = function(number) {
+        var lastDigit = number % 10;
+        if (number > 10 && number < 20) {
+            return number + 'th';
+        } else if (lastDigit === 1) {
+            return number + 'st';
+        } else if (lastDigit === 2) {
+            return number + 'nd';
+        } else if (lastDigit === 3) {
+            return number + 'rd';
+        } else {
+            return number + 'th';
+        }
+    };
+
+    /**
+     * @param month {number} January = 0
+     * @returns {string}
+     */
+    exports.monthToThreeDigitString = function(month) {
+        switch (month) {
+            case 0: return 'Jan'
+        }
     };
 });

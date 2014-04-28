@@ -1,7 +1,73 @@
+div.dayslist {
+    width: 200px;
+    font-family: sans-serif;
+    color: #333;
+}
+    .dayslist table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+    }
+
+    .dayslist tbody tr {
+        cursor: pointer;
+    }
+
+        .dayslist tbody tr.total, .dayslist tbody tr.selected {
+            cursor: default;
+        }
+
+    .dayslist th {
+        background-color: #eee;
+        font-variant:small-caps;
+        padding: 1px 4px;
+        border-bottom: 1px solid black;
+    }
+
+        .dayslist thead th {
+            text-align: center;
+        }
+
+        .dayslist tbody th {
+            text-align: left;
+        }
+
+    .dayslist td {
+        border: 1px solid black;
+        text-align: right;
+    }
+
+    .dayslist .total {
+    }
+
+        .dayslist .total th {
+            font-weight: bold;
+            background-color: #ddd;
+        }
+
+        .dayslist .total td {
+            font-weight: bold;
+            background-color: #eee;
+        }
+
+    .dayslist .in-the-black {
+        color: green;
+    }
+
+    .dayslist .in-the-red {
+        color: red;
+    }
+
+    .dayslist tbody .selected th, .dayslist tbody .selected td {
+        color: black;
+        background-color: cornflowerblue;
+    }
+
+
 div.timegrid {
 	width: 300px;
 	font-family: sans-serif;
-	color: #666;
+	color: #333;
 }
 
 	.timegrid table {
@@ -143,9 +209,15 @@ div.timelist {
 		.timelist .timeentry textarea.note {
 			width: 100%;
 		}
-		
+
+
+div.dayslist {
+    float: left;
+}
+
 div.timegrid {
 	float: left;
+    margin-left: .5em;
 }
 
 div.timelist {

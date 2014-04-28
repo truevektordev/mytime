@@ -21,6 +21,13 @@ function (declare,
           template,
           gridRowTemplate) {
 
+    /**
+     *
+     * emits:
+     * - The following four drag events each have the event data { startHour: hour where the drag began, endHour hour
+     *   where the drag finished or currently is}
+     * - startDrag, updateDrag, endDrag and cancelDrag
+     */
     return declare([_WidgetBase, _TemplatedMixin, Evented], {
         templateString: template,
         currentDateLabel: null,
@@ -94,8 +101,10 @@ function (declare,
         _mouseDown: function(e) {
             var cell = this._getContainingCell(e.target);
             if (cell) {
+                var timeAtCursor = this._getTimeAtPosition(e.x, cell);
                 this._currentDrag = {
-                    startHour: this._getTimeAtPosition(e.x, cell)
+                    startHour: timeAtCursor,
+                    endHour: timeAtCursor
                 };
                 this.emit("startDrag", this._currentDrag);
                 this._dragMouseEventHandles.push(

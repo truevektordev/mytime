@@ -4,6 +4,16 @@
   <meta charset="utf-8">
   <title>Time Logger</title>
   <link rel="stylesheet" href="styles.css">
+    <style>
+        #log {
+            border: 1px solid grey;
+            width: auto;
+            position: fixed;
+            bottom: 0;
+            margin: 0;
+            padding: 5px;
+        }
+    </style>
   <script type="text/javascript" src="script/dojo/dojo/dojo.js" data-dojo-config="
     packages: [
         { name: 'mytime', location: '../../mytime' },
@@ -14,6 +24,8 @@
   "></script>
 </head>
 <body>
+
+    <div data-dojo-id="dayList" data-dojo-type="mytime/widget/DaysInWeekList"></div>
 
     <div data-dojo-id="dtw" data-dojo-type="mytime/DailyTimeWidget"
                             data-dojo-props="date: '2010-10-10'"></div>
@@ -34,15 +46,19 @@
 	</div>
 
     <script>
-        require(["dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on",
+        require(["lodash", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on",
                  "mytime/util/EnhancedMemoryStore", "mytime/persistence/ImporterExporter"],
-        function(ready, dom, domAttr, on, EnhancedMemoryStore, ImporterExporter) {
+        function(_, ready, dom, domAttr, on, EnhancedMemoryStore, ImporterExporter) {
             ready(function() {
                 window.store = EnhancedMemoryStore.createObservable();
                 importTextArea();
                 dtw.set("timeEntryStore", window.store);
                 on(dom.byId("import"), "click", importTextArea);
                 on(dom.byId("export"), "click", exportTextArea);
+
+                dtw.on('createEntryAction', _.partial(logAction, 'createEntryAction'));
+                dtw.on('updateEntryAction', _.partial(logAction, 'createEntryAction'));
+                dtw.on('deleteEntryAction', _.partial(logAction, 'createEntryAction'));
             });
 
             function importTextArea() {
@@ -54,6 +70,11 @@
                 var exportString = new ImporterExporter().exportStoreToString(window.store);
                 domAttr.set("persistenceTextArea", "value", exportString);
             }
+
+            function logAction(eventType, event) {
+                var newline = dom.byId('log').innerHTML == '' ? '' : '\n';
+                dom.byId('log').innerHTML += newline + eventType + ' ' + JSON.stringify(event);
+            }
         });
     </script>
 
@@ -64,6 +85,7 @@
 ]
     </textarea>
     <button id="import">Import</button>
-    <button id="export">Export</button>
+    <button id="export">Export</button><br/>
+    <pre id="log"></pre>
 </body>
 </html>
