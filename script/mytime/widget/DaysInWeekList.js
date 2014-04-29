@@ -28,7 +28,7 @@ function (declare,
      */
     return declare([_WidgetBase, _TemplatedMixin, Evented], {
         templateString: template,
-        selectedDate: '2014-01-01',
+        selectedDate: DateTimeUtil.getCurrentDate(),
         _firstDayOfWeek: null,
         _selectedDayOfWeek: null,
 

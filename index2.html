@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Time Logger</title>
+  <link rel="stylesheet" href="styles.css">
+    <style>
+        #log {
+            border: 1px solid grey;
+            width: auto;
+            position: fixed;
+            bottom: 0;
+            margin: 0;
+            padding: 5px;
+        }
+    </style>
+  <script type="text/javascript" src="script/dojo/dojo/dojo.js" data-dojo-config="
+    packages: [
+        { name: 'mytime', location: '../../mytime' },
+        { name: 'lodash', location: '../..', main: 'lodash' }
+    ],
+    deps: ['mytime/debug-helper'],
+    parseOnLoad: true
+  "></script>
+</head>
+<body>
+
+    <div data-dojo-id="pane" data-dojo-type="mytime/view/TimeEntryPane"></div>
+
+    <script>
+        require(["lodash", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on",
+                 "mytime/util/EnhancedMemoryStore", "mytime/persistence/ImporterExporter"],
+        function(_, ready, dom, domAttr, on, EnhancedMemoryStore, ImporterExporter) {
+//            ready(function() {
+//                window.store = EnhancedMemoryStore.createObservable();
+//                importTextArea();
+//                dtw.set("timeEntryStore", window.store);
+//                on(dom.byId("import"), "click", importTextArea);
+//                on(dom.byId("export"), "click", exportTextArea);
+//
+//                dtw.on('createEntryAction', _.partial(logAction, 'createEntryAction'));
+//                dtw.on('updateEntryAction', _.partial(logAction, 'createEntryAction'));
+//                dtw.on('deleteEntryAction', _.partial(logAction, 'createEntryAction'));
+//            });
+
+            function importTextArea() {
+                var importString = domAttr.get("persistenceTextArea", "value");
+                new ImporterExporter().importStringToStore(importString, window.store);
+            }
+
+            function exportTextArea() {
+                var exportString = new ImporterExporter().exportStoreToString(window.store);
+                domAttr.set("persistenceTextArea", "value", exportString);
+            }
+
+            function logAction(eventType, event) {
+                var newline = dom.byId('log').innerHTML == '' ? '' : '\n';
+                dom.byId('log').innerHTML += newline + eventType + ' ' + JSON.stringify(event);
+            }
+        });
+    </script>
+
+    <textarea id="persistenceTextArea" rows="15" cols="80">
+[
+{ "id": "a", "date": "2010-10-10", "startHour": 10, "endHour": 12 },
+{ "id": "b", "date": "2010-10-10", "startHour": 12.5, "endHour": 14 }
+]
+    </textarea>
+    <button id="import">Import</button>
+    <button id="export">Export</button><br/>
+</body>
+</html>
