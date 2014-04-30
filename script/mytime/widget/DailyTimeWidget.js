@@ -5,7 +5,7 @@ define([
     "mytime/model/TimeEntry",
     "mytime/command/AddTimeEntryCommand",
     "mytime/util/DateTimeUtil",
-    "mytime/DailyTimeWidget/DailyTimeWidgetView"
+    "mytime/widget/DailyTimeWidget/DailyTimeWidgetView"
 ],
 function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand, DateTimeUtil, View) {
 
@@ -17,6 +17,9 @@ function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand
      */
     return declare([_WidgetBase, Evented], {
 
+        /**
+         * @type {string} yyyy-mm-dd
+         */
         date: null,
 
         startHour: 7,
@@ -31,7 +34,9 @@ function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand
         _timeEntryStoreObserverHandle: null,
 
         constructor: function() {
-            this._view = new View();
+            this._view = new View({
+                model: this
+            });
         },
 
         _setTimeEntryStoreAttr: function(store) {
@@ -40,7 +45,7 @@ function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand
         },
 
         _setDateAttr: function(date) {
-            this.date = date;
+            this._set('date', date);
             this._view.timeEntryStore.set('date', date);
         },
 

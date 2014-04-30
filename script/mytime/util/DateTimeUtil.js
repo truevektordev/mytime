@@ -52,6 +52,9 @@ function (exports) {
     };
 
     exports.convertDateStringToDateObject = function(dateString) {
+        if (!dateString) {
+            return null;
+        }
         var parts = dateString.split('-');
         var MIDDLE_OF_DAY = 12;
         return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), MIDDLE_OF_DAY);

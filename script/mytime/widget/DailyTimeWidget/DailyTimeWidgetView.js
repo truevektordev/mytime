@@ -3,7 +3,7 @@ define([
     "lodash",
     "dojo/_base/lang",
     "dojo/string", "dojo/on", "dojo/query",
-    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry",
+    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry", "dojo/date/locale",
     "dojo/Evented", "dojo/store/Observable",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
     "mytime/util/DateTimeUtil", "mytime/util/SingleDayFilteringTimeEntryStore",
@@ -14,7 +14,7 @@ function (declare,
           _,
           lang,
           stringUtil, on, query,
-          domConstruct, domClass, domStyle, domGeom,
+          domConstruct, domClass, domStyle, domGeom, dateLocale,
           Evented, Observable,
           _WidgetBase, _TemplatedMixin,
           DateTimeUtil, SingleDayFilteringTimeEntryStore,
@@ -33,6 +33,8 @@ function (declare,
         currentDateLabel: null,
         timeRowsContainer: null,
 
+        model: null,
+
         startHour: 7,
         endHour: 19,
 
@@ -46,6 +48,12 @@ function (declare,
             this._timeBarsByTimeEntryId = {};
             this._timeEntryWatchers = {};
             this._dragMouseEventHandles = [];
+        },
+
+        _renderDate: function() {
+            var date = DateTimeUtil.convertDateStringToDateObject(this.model.get('date'));
+            var label = !date ? '' : dateLocale.format(date, {selector: 'date', datePattern: 'EEEE, d MMMM'});
+            this.currentDateLabel.innerHTML = label;
         },
 
         buildRendering: function() {
@@ -89,10 +97,12 @@ function (declare,
             this.own(
                 this.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
+                this.model.watch('date', lang.hitch(this, "_renderDate")),
                 this.timeEntryStore.observe(lang.hitch(this, '_timeEntryStoreListener')),
 
                 on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown'))
             );
+            this._renderDate();
         },
 
         _currentDrag: null,

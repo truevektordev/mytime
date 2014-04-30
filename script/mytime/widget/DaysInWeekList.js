@@ -41,7 +41,7 @@ function (declare,
         _WeekDiffNode: null,
 
         _setSelectedDateAttr: function(value) {
-            this.selectedDate = value;
+            this._set('selectedDate', value);
             var date = DateTimeUtil.convertDateStringToDateObject(value);
             this._selectedDayOfWeek = date.getDay();
             this._firstDayOfWeek = dojoDate.add(date, 'day', -this._selectedDayOfWeek);
