@@ -6,6 +6,11 @@ function (_, declare, Deferred, topic) {
 
         exec: function() {
             topic.publish("command/" + this.commandTopic, this);
+            return this;
+        },
+
+        subscribe: function(subscriberFunction) {
+            topic.subscribe("command/" + this.commandTopic, subscriberFunction);
         }
     });
 
