@@ -1,18 +1,35 @@
-define(["lodash", "dojo/_base/declare", "dojo/Deferred", "dojo/topic"],
-function (_, declare, Deferred, topic) {
+define(["lodash", "dojo/_base/lang", "dojo/_base/declare", "dojo/Deferred", "dojo/topic"],
+function (_, lang, declare, Deferred, topic) {
 
+    /**
+     * Command instances have an exec() method.
+     * Each command class has a 'static' subscribe() method.
+     *
+     */
     var _Command = declare([Deferred], {
         commandTopic: "",
+
+        constructor: function(args) {
+            lang.mixin(this, args);
+        },
 
         exec: function() {
             topic.publish("command/" + this.commandTopic, this);
             return this;
-        },
-
-        subscribe: function(subscriberFunction) {
-            topic.subscribe("command/" + this.commandTopic, subscriberFunction);
         }
     });
+
+    _Command.makeCommand = function(prototype) {
+        var Command = declare([_Command], prototype);
+        /**
+         * Subscribe to this class of Commands, not including subclasses.
+         * @param subscriberFunction function to call when the event is executed.
+         */
+        Command.subscribe = function(subscriberFunction) {
+            return topic.subscribe("command/" + prototype.commandTopic, subscriberFunction);
+        };
+        return Command;
+    };
 
     return _Command;
 });

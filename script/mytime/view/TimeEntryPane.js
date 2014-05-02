@@ -1,13 +1,16 @@
 define([
-    "lodash", "dojo/_base/declare",
+    "lodash", "dojo/_base/lang", "dojo/_base/declare",
     'dijit/_WidgetBase', 'dijit/_TemplatedMixin', 'dijit/_WidgetsInTemplateMixin',
     'mytime/util/DateTimeUtil', 'mytime/model/modelRegistry',
+    'mytime/command/AddTimeEntryCommand',
     'dojox/mvc/sync',
     'dojo/text!./TimeEntryPane.html'
 ], function (
-    _, declare,
+    _, lang, declare,
     _WidgetBase,
-    _TemplatedMixin, _WidgetsInTemplateMixin, DateTimeUtil, modelRegistry,
+    _TemplatedMixin, _WidgetsInTemplateMixin,
+    DateTimeUtil, modelRegistry,
+    AddTimeEntryCommand,
     sync,
     template
 ) {
@@ -24,6 +27,12 @@ define([
             this.own(sync(this, 'currentDate', this._dailyTimeWidget, 'date'));
             this.own(sync(modelRegistry, 'timeEntryStore', this._daysInWeekList, 'timeEntryStore', {bindDirection: sync.from}));
             this.own(sync(modelRegistry, 'timeEntryStore', this._dailyTimeWidget, 'timeEntryStore', {bindDirection: sync.from}));
+
+            this.own(this._dailyTimeWidget.on('createEntryAction', lang.hitch(this, '_createTimeEntry')))
+        },
+
+        _createTimeEntry: function(entry) {
+            new AddTimeEntryCommand({timeEntry: entry.timeEntry}).exec();
         }
     });
 });
