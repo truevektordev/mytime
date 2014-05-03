@@ -17,7 +17,7 @@ function (
      * inputs:
      * - timeEntryStore, date
      * emits:
-     * - createEntryAction, updateEntryAction, deleteEntryAction
+     * - createTimeEntry, updateTimeEntry, deleteTimeEntry
      */
     return declare([_WidgetBase, Evented], {
 
@@ -63,14 +63,88 @@ function (
         },
 
         _endDragListener: function(event) {
+            var entryAtStartOfDrag = this._findEntryContainingHour(event.startHour);
+            if (entryAtStartOfDrag) {
+                var startOrEnd = this._isHourAtStartOrEndOfEntry(entryAtStartOfDrag, event.startHour);
+                if (startOrEnd) {
+                    this._doEndDragAdjust(event, entryAtStartOfDrag, startOrEnd);
+                } else {
+                    this._doEndDragMove(event, entryAtStartOfDrag);
+                }
+            } else {
+                this._doEndDragCreate(event);
+            }
+        },
+
+        _findEntryContainingHour: function(hour) {
+            var result = null;
+            _.forEach(this._internalStore.query({}), function(entry) {
+                if (hour > entry.startHour && hour < entry.endHour) {
+                    result = entry;
+                    return false; //exit loop
+                }
+            });
+            return result;
+        },
+
+        _isHourAtStartOrEndOfEntry: function(timeEntry, hour) {
+            if (hour < timeEntry.startHour + 0.083) {
+                return 'start';
+            } else if (hour > timeEntry.endHour - 0.083) {
+                return 'end';
+            } else {
+                return false;
+            }
+        },
+
+        _doEndDragCreate: function(event) {
             var timeEntry = this._createTimeEntryFromDragEvent(event);
 
             if (timeEntry.startHour === timeEntry.endHour) {
                 return; // The selected range is too small.
             }
 
-            this.emit('createEntryAction', {
+            this.emit('createTimeEntry', {
                 timeEntry: timeEntry
+            });
+        },
+
+        _doEndDragAdjust: function(event, timeEntry, startOrEnd) {
+            timeEntry = this.timeEntryStore.get(timeEntry.id);
+            var modifiedTimeEntry = new TimeEntry({
+                id: timeEntry.get('id'),
+                startHour: timeEntry.get('startHour'),
+                endHour: timeEntry.get('endHour')
+            });
+
+            var destinationHour = DateTimeUtil.roundToFifteenMinutes(event.endHour);
+            var propertyToModify = startOrEnd + 'Hour';
+            if (destinationHour === timeEntry.get(propertyToModify)) {
+                return; // Didn't change significantly.
+            }
+            modifiedTimeEntry.set(propertyToModify, destinationHour);
+
+            this.emit('updateTimeEntry', {
+                timeEntry: modifiedTimeEntry
+            });
+        },
+
+        _doEndDragMove: function(event, timeEntry) {
+            var diff = event.endHour - event.startHour;
+            diff = DateTimeUtil.roundToFifteenMinutes(diff);
+            if (diff === 0) {
+                return; // Didn't change significantly.
+            }
+
+            timeEntry = this.timeEntryStore.get(timeEntry.id);
+            var modifiedTimeEntry = new TimeEntry({
+                id: timeEntry.get('id'),
+                startHour: timeEntry.get('startHour') + diff,
+                endHour: timeEntry.get('endHour') + diff
+            });
+
+            this.emit('updateTimeEntry', {
+                timeEntry: modifiedTimeEntry
             });
         },
 
