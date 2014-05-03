@@ -1,13 +1,17 @@
 define([
     "lodash",
-    "dojo/_base/declare", "dojo/_base/lang", "dojo/Evented",
+    "dojo/_base/lang", "dojo/_base/declare", "dojo/Evented", "dojo/store/Observable",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
-    "mytime/command/AddTimeEntryCommand",
-    "mytime/util/DateTimeUtil",
+    "mytime/util/DateTimeUtil", "mytime/util/SingleDayFilteringTimeEntryStore", "mytime/util/syncFrom",
     "mytime/widget/DailyTimeWidget/DailyTimeWidgetView"
 ],
-function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand, DateTimeUtil, View) {
+function (
+    _, lang, declare, Evented, Observable,
+    _WidgetBase,
+    TimeEntry,
+    DateTimeUtil, SingleDayFilteringTimeEntryStore, syncFrom,
+    View) {
 
     /**
      * inputs:
@@ -27,6 +31,8 @@ function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand
         endHour: 19,
 
         timeEntryStore: null,
+        
+        _internalStore: null,
 
         _view: null,
 
@@ -34,29 +40,16 @@ function (_, declare, lang, Evented, _WidgetBase, TimeEntry, AddTimeEntryCommand
         _timeEntryStoreObserverHandle: null,
 
         constructor: function() {
+            this._internalStore = new Observable(new SingleDayFilteringTimeEntryStore());
+            this.own(
+                syncFrom(this, 'date', this._internalStore),
+                syncFrom(this, 'startHour', this._internalStore),
+                syncFrom(this, 'endHour', this._internalStore),
+                syncFrom(this, 'timeEntryStore', this._internalStore, 'sourceStore')
+            );
             this._view = new View({
                 model: this
             });
-        },
-
-        _setTimeEntryStoreAttr: function(store) {
-            this.timeEntryStore = store;
-            this._view.timeEntryStore.set('sourceStore', store);
-        },
-
-        _setDateAttr: function(date) {
-            this._set('date', date);
-            this._view.timeEntryStore.set('date', date);
-        },
-
-        _setStartHourAttr: function(startHour) {
-            this.startHour = startHour;
-            this._view.timeEntryStore.set('startHour', startHour);
-        },
-
-        _setEndHourAttr: function(endHour) {
-            this.endHour = endHour;
-            this._view.timeEntryStore.set('endHour', endHour);
         },
 
         buildRendering: function() {

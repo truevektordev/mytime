@@ -4,9 +4,9 @@ define([
     "dojo/_base/lang",
     "dojo/string", "dojo/on", "dojo/query",
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry", "dojo/date/locale",
-    "dojo/Evented", "dojo/store/Observable",
+    "dojo/Evented",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
-    "mytime/util/DateTimeUtil", "mytime/util/SingleDayFilteringTimeEntryStore",
+    "mytime/util/DateTimeUtil",
     "dojo/text!./templates/grid.html",
     "dojo/text!./templates/gridrow.html"
 ],
@@ -15,9 +15,9 @@ function (declare,
           lang,
           stringUtil, on, query,
           domConstruct, domClass, domStyle, domGeom, dateLocale,
-          Evented, Observable,
+          Evented,
           _WidgetBase, _TemplatedMixin,
-          DateTimeUtil, SingleDayFilteringTimeEntryStore,
+          DateTimeUtil,
           template,
           gridRowTemplate) {
 
@@ -35,16 +35,10 @@ function (declare,
 
         model: null,
 
-        startHour: 7,
-        endHour: 19,
-
-        timeEntryStore: null,
-
         _timeBarsByTimeEntryId: null,
         _timeEntryWatchers: null,
 
         constructor: function() {
-            this.timeEntryStore = new Observable(new SingleDayFilteringTimeEntryStore());
             this._timeBarsByTimeEntryId = {};
             this._timeEntryWatchers = {};
             this._dragMouseEventHandles = [];
@@ -63,7 +57,7 @@ function (declare,
 
         _renderRows: function() {
             var html = "";
-            for (var hour = this.startHour; hour <= this.endHour; hour++) {
+            for (var hour = this.model.get('startHour'); hour <= this.model.get('endHour'); hour++) {
                 var label = this._getLabelForHour(hour);
                 html += stringUtil.substitute(gridRowTemplate, { hourLabel: label });
             }
@@ -81,11 +75,11 @@ function (declare,
         },
 
         _getContainerForHour: function(hour) {
-            return query("td", this.timeRowsContainer)[hour - this.startHour];
+            return query("td", this.timeRowsContainer)[hour - this.model.get('startHour')];
         },
 
         _getHourForContainer: function(containerNode) {
-            var hour = this.startHour;
+            var hour = this.model.get('startHour');
             query("td", this.timeRowsContainer).some(function(cell) {
                 if (cell === containerNode) {
                     return true;
@@ -97,10 +91,10 @@ function (declare,
 
         postCreate: function() {
             this.own(
-                this.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
-                this.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
+                this.model.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
+                this.model.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.model.watch('date', lang.hitch(this, "_renderDate")),
-                this.timeEntryStore.observe(lang.hitch(this, '_timeEntryStoreListener')),
+                this.model._internalStore.observe(lang.hitch(this, '_timeEntryStoreListener')),
 
                 on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown'))
             );
