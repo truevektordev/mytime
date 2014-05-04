@@ -1,13 +1,15 @@
 define([
     "dojo/_base/lang", "dojo/_base/declare",
     "dojox/mvc/sync",
-    'mytime/model/modelRegistry', "mytime/command/CreateTimeEntryCommand", 'mytime/command/UpdateTimeEntryCommand',
+    'mytime/model/modelRegistry', 'mytime/model/TimeEntry',
+    "mytime/command/CreateTimeEntryCommand", 'mytime/command/UpdateTimeEntryCommand',
     'mytime/command/DeleteTimeEntryCommand',
     'mytime/persistence/IdGenerator'
 ], function(
     lang, declare,
     sync,
-    modelRegistry, CreateTimeEntryCommand, UpdateTimeEntryCommand, DeleteTimeEntryCommand,
+    modelRegistry, TimeEntry,
+    CreateTimeEntryCommand, UpdateTimeEntryCommand, DeleteTimeEntryCommand,
     IdGenerator
 ) {
 
@@ -26,10 +28,11 @@ define([
             if (!this._timeEntryStore) {
                 command.reject(new Error("Cannot add time entry before system is initialized."));
             } else {
-                command.timeEntry.set('id', IdGenerator.nextIdForType('TimeEntry'));
-                console.log('PUT NEW ' + JSON.stringify(command.timeEntry));
-                this._timeEntryStore.put(command.timeEntry);
-                command.resolve({timeEntryId: command.timeEntry.get('id'), timeEntry: command.timeEntry});
+                var timeEntry = new TimeEntry(command.timeEntry);
+                timeEntry.set('id', IdGenerator.nextIdForType('TimeEntry'));
+                console.log('PUT NEW ' + JSON.stringify(timeEntry));
+                this._timeEntryStore.put(timeEntry);
+                command.resolve({timeEntryId: timeEntry.get('id'), timeEntry: timeEntry});
             }
         },
 
@@ -45,7 +48,7 @@ define([
                     command.reject(error);
                     return;
                 }
-                this._copyTimeEntryProperties(command.timeEntry, existingEntry);
+                existingEntry.updateFrom(command.timeEntry, true);
                 console.log('PUT ' + JSON.stringify(existingEntry));
                 this._timeEntryStore.put(existingEntry);
                 command.resolve({timeEntryId: existingEntry.get('id'), timeEntry: existingEntry});
@@ -67,14 +70,6 @@ define([
                 this._timeEntryStore.remove(command.timeEntryId);
                 command.resolve({timeEntryId: command.timeEntryId, timeEntry: existingEntry});
             }
-        },
-
-        _copyTimeEntryProperties: function(source, dest) {
-            _.forEach(['date', 'startHour', 'endHour'], function(property) {
-                if (source.hasOwnProperty(property)) {
-                    dest.set(property, source.get(property));
-                }
-            });
         }
 
         // TODO destroy

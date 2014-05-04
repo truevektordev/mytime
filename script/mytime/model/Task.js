@@ -6,11 +6,8 @@ define([
 function (module, declare, Stateful, setIfDifferent) {
     return declare(module.id, [Stateful], {
         id: null,
-        date: null,
-        startHour: null,
-        endHour: null,
-
-        text: null,
+        code: null,
+        name: null,
 
         constructor: function(values) {
             if (typeof values === 'object') {
@@ -20,7 +17,7 @@ function (module, declare, Stateful, setIfDifferent) {
 
         updateFrom: function(properties, ignoreEmptyProperties) {
             var copyEveryProperty = !ignoreEmptyProperties;
-            _.forEach(["id", "date", "startHour", "endHour", "text"], function(property) {
+            _.forEach(["id", "code", "name"], function(property) {
                 if (copyEveryProperty || properties.hasOwnProperty(property)) {
                     setIfDifferent(this, property, properties[property]);
                 }
