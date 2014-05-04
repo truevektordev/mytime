@@ -123,10 +123,16 @@ function (
                 return; // Didn't change significantly.
             }
             modifiedTimeEntry.set(propertyToModify, destinationHour);
-
-            this.emit('updateTimeEntry', {
-                timeEntry: modifiedTimeEntry
-            });
+            if (modifiedTimeEntry.get('startHour') === modifiedTimeEntry.get('endHour')) {
+                // adjusted to zero time... Just delete it.
+                this.emit('deleteTimeEntry', {
+                    timeEntryId: modifiedTimeEntry.get('id')
+                });
+            } else {
+                this.emit('updateTimeEntry', {
+                    timeEntry: modifiedTimeEntry
+                });
+            }
         },
 
         _doEndDragMove: function(event, timeEntry) {

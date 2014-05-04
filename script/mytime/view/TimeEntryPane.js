@@ -2,7 +2,8 @@ define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     'dijit/_WidgetBase', 'dijit/_TemplatedMixin', 'dijit/_WidgetsInTemplateMixin',
     'mytime/util/DateTimeUtil', 'mytime/model/modelRegistry',
-    'mytime/command/AddTimeEntryCommand', 'mytime/command/UpdateTimeEntryCommand',
+    "mytime/command/CreateTimeEntryCommand", 'mytime/command/UpdateTimeEntryCommand',
+    'mytime/command/DeleteTimeEntryCommand',
     'dojox/mvc/sync',
     'dojo/text!./TimeEntryPane.html'
 ], function (
@@ -10,7 +11,7 @@ define([
     _WidgetBase,
     _TemplatedMixin, _WidgetsInTemplateMixin,
     DateTimeUtil, modelRegistry,
-    AddTimeEntryCommand, UpdateTimeEntryCommand,
+    CreateTimeEntryCommand, UpdateTimeEntryCommand, DeleteTimeEntryCommand,
     sync,
     template
 ) {
@@ -30,14 +31,19 @@ define([
 
             this.own(this._dailyTimeWidget.on('createTimeEntry', lang.hitch(this, '_createTimeEntry')))
             this.own(this._dailyTimeWidget.on('updateTimeEntry', lang.hitch(this, '_updateTimeEntry')))
+            this.own(this._dailyTimeWidget.on('deleteTimeEntry', lang.hitch(this, '_deleteTimeEntry')))
         },
 
         _createTimeEntry: function(entry) {
-            new AddTimeEntryCommand({timeEntry: entry.timeEntry}).exec();
+            new CreateTimeEntryCommand({timeEntry: entry.timeEntry}).exec();
         },
 
         _updateTimeEntry: function(entry) {
             new UpdateTimeEntryCommand({timeEntry: entry.timeEntry}).exec();
+        },
+
+        _deleteTimeEntry: function(entry) {
+            new DeleteTimeEntryCommand({timeEntryId: entry.timeEntryId}).exec();
         }
     });
 });
