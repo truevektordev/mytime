@@ -165,6 +165,14 @@ div.timegrid {
 			opacity: .7;
 			border-width: 1px;
 			border-style: solid none;
+
+            color: black;
+            text-align: center;
+            font-weight: bold;
+            font-size: 80%;
+            line-height: 150%;
+            overflow: hidden;
+            text-overflow: ellipsis;
 		}
 	
 			.timegrid .start {
