@@ -6,7 +6,7 @@ define([
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry", "dojo/date/locale",
     "dojo/Evented",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
-    "mytime/util/DateTimeUtil",
+    "mytime/util/DateTimeUtil", "mytime/util/Colors",
     "dojo/text!./templates/grid.html",
     "dojo/text!./templates/gridrow.html"
 ],
@@ -17,7 +17,7 @@ function (declare,
           domConstruct, domClass, domStyle, domGeom, dateLocale,
           Evented,
           _WidgetBase, _TemplatedMixin,
-          DateTimeUtil,
+          DateTimeUtil, Colors,
           template,
           gridRowTemplate) {
 
@@ -269,7 +269,17 @@ function (declare,
         },
 
         _setTimeBarAttributes: function(timeBar, timeEntry) {
-            domStyle.set(timeBar, "background-color", timeEntry.get("color"));
+            var color = timeEntry.get("color");
+            var light = Colors.light(color);
+            var lighter = Colors.lighter(color);
+            var shadow = Colors.shadow(color);
+            var darker = Colors.darker(color);
+            domStyle.set(timeBar, "background-color", Colors.base(color));
+            domStyle.set(timeBar, "background", "linear-gradient(to bottom right, " + light + ", " + shadow + ")");
+            domStyle.set(timeBar, "border-top-color", lighter);
+            domStyle.set(timeBar, "border-left-color", lighter);
+            domStyle.set(timeBar, "border-bottom-color", darker);
+            domStyle.set(timeBar, "border-right-color", darker);
         },
 
         _setTimeBarSize: function(timeBar, slot) {

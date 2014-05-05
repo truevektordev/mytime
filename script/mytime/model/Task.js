@@ -8,6 +8,7 @@ function (module, declare, Stateful, setIfDifferent) {
         id: null,
         code: null,
         name: null,
+        color: null,
 
         constructor: function(values) {
             if (typeof values === 'object') {
