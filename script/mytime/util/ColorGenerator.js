@@ -1,5 +1,5 @@
-define(["dojo/_lang/declare"], function (declare) {
-    return declare({
+define(["dojo/_base/declare"], function (declare) {
+    return declare(null, {
         colors: [
             '0,100',
             '30,100',

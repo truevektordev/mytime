@@ -36,7 +36,7 @@ define([
                 var task = new Task(command.task);
                 task.set('id', IdGenerator.nextIdForType('Task'));
                 if (!task.get('color')) {
-                    task.set('color', colorGenerator.next());
+                    task.set('color', this.colorGenerator.next());
                 }
                 console.log('PUT NEW ' + JSON.stringify(task));
                 this._taskStore.put(task);
