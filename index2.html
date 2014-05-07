@@ -1,77 +1,20 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Time Logger</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="script/dojo/dijit/themes/nihilo/nihilo.css">
-    <style>
-        #log {
-            border: 1px solid grey;
-            width: auto;
-            position: fixed;
-            bottom: 0;
-            margin: 0;
-            padding: 5px;
-        }
-    </style>
-  <script type="text/javascript" src="script/dojo/dojo/dojo.js" data-dojo-config="
-    packages: [
-        { name: 'mytime', location: '../../mytime' },
-        { name: 'lodash', location: '../..', main: 'lodash' }
-    ],
-    deps: ['mytime/debug-helper', 'mytime/main'],
-    parseOnLoad: true
-  "></script>
+    <meta charset="utf-8">
+    <title>Time Logger</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bower_components/dijit/themes/nihilo/nihilo.css">
+    <script type="text/javascript" src="bower_components/dojo/dojo.js" data-dojo-config="
+        async: true,
+        deps: ['./script/config']
+    "></script>
 </head>
 <body class="nihilo">
 
-    <div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height: 400px;">
-        <div data-dojo-id="pane" data-dojo-type="mytime/view/TimeEntryPane" data-dojo-props="title: 'Time Entry'"></div>
-    </div>
+<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height: 400px;">
+    <div data-dojo-id="pane" data-dojo-type="mytime/view/TimeEntryPane" data-dojo-props="title: 'Time Entry'"></div>
+</div>
 
-    <script>
-        require(["lodash", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on",
-                 "mytime/util/EnhancedMemoryStore", "mytime/persistence/ImporterExporter"],
-        function(_, ready, dom, domAttr, on, EnhancedMemoryStore, ImporterExporter) {
-//            ready(function() {
-//                window.store = EnhancedMemoryStore.createObservable();
-//                importTextArea();
-//                dtw.set("timeEntryStore", window.store);
-//                on(dom.byId("import"), "click", importTextArea);
-//                on(dom.byId("export"), "click", exportTextArea);
-//
-//                dtw.on('createEntryAction', _.partial(logAction, 'createEntryAction'));
-//                dtw.on('updateEntryAction', _.partial(logAction, 'createEntryAction'));
-//                dtw.on('deleteEntryAction', _.partial(logAction, 'createEntryAction'));
-//            });
-
-            function importTextArea() {
-                var importString = domAttr.get("persistenceTextArea", "value");
-                new ImporterExporter().importStringToStore(importString, window.store);
-            }
-
-            function exportTextArea() {
-                var exportString = new ImporterExporter().exportStoreToString(window.store);
-                domAttr.set("persistenceTextArea", "value", exportString);
-            }
-
-            function logAction(eventType, event) {
-                var newline = dom.byId('log').innerHTML == '' ? '' : '\n';
-                dom.byId('log').innerHTML += newline + eventType + ' ' + JSON.stringify(event);
-            }
-        });
-    </script>
-
-    <div style="display:none;">
-        <textarea id="persistenceTextArea" rows="15" cols="80">
-[
-{ "id": "a", "date": "2010-10-10", "startHour": 10, "endHour": 12 },
-{ "id": "b", "date": "2010-10-10", "startHour": 12.5, "endHour": 14 }
-]
-        </textarea>
-        <button id="import">Import</button>
-        <button id="export">Export</button><br/>
-    </div>
 </body>
 </html>

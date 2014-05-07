@@ -5,7 +5,9 @@ define([
     "mytime/command/CreateTimeEntryCommand", 'mytime/command/UpdateTimeEntryCommand',
     'mytime/command/DeleteTimeEntryCommand',
     'dojox/mvc/sync',
-    'dojo/text!./TimeEntryPane.html'
+    'dojo/text!./TimeEntryPane.html',
+    /* In template: */
+    'mytime/widget/DaysInWeekList', 'mytime/widget/DailyTimeWidget', 'mytime/widget/DailyTimeList'
 ], function (
     _, lang, declare,
     _WidgetBase,
