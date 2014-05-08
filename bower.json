@@ -12,6 +12,8 @@
     },
     "devDependencies": {
         "mocha": "*",
-        "chai": "*"
+        "chai": "*",
+        "sinonjs": "1.9.1",
+        "sinon-chai": "2.5.0"
     }
 }
