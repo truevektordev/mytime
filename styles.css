@@ -198,16 +198,25 @@ div.timelist {
 		border-radius: .4em;
 		padding: .2em .4em;
 		margin: 0 0 .1em 0;
+        font-size: 80%;
 	}
-	
-		.timelist .timeentry span.key {
-			font-weight: bold;
-			padding-right: .2em;
-			font-size: 80%;
-		}
-	
-		.timelist .timeentry span.note {
-			font-size: 80%;
+
+        .timelist .timeentry .task {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+            .timelist .timeentry .code {
+                font-weight: bold;
+                padding-right: .2em;
+            }
+
+            .timelist .timeentry .name {
+                font-style: italic;
+            }
+
+		.timelist .timeentry .note {
 		}
 		
 		.timelist .timeentry input.key {
