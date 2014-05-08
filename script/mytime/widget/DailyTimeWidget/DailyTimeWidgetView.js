@@ -94,7 +94,7 @@ function (declare,
                 this.model.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.model.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.model.watch('date', lang.hitch(this, "_renderDate")),
-                this.model._internalStore.observe(lang.hitch(this, '_timeEntryStoreListener')),
+                this.model._internalStore.observe(lang.hitch(this, '_timeEntryStoreListener'), true),
 
                 on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown'))
             );
@@ -166,10 +166,11 @@ function (declare,
 
 
         _timeEntryStoreListener: function(object, removedFrom, insertedInto) {
-            if (removedFrom > -1) {
+            if (insertedInto > -1 && removedFrom > -1) {
+                this._timeEntryChanged(object);
+            } else if (removedFrom > -1) {
                 this._timeEntryRemoved(object);
-            }
-            if (insertedInto > -1) {
+            } else if (insertedInto > -1) {
                 this._timeEntryAdded(object);
             }
         },
@@ -202,17 +203,13 @@ function (declare,
 
         _timeEntryAdded: function(timeEntry) {
             this._buildTimeBarsForTimeEntry(timeEntry);
-            this._timeEntryWatchers[timeEntry.get("id")] = timeEntry.watch(lang.hitch(this, "_timeEntryPropertyChanged", timeEntry))
         },
 
-        _timeEntryPropertyChanged: function(timeEntry, property, prev, value) {
-            if (property === "color") {
-                _.forEach(this._timeBarsByTimeEntryId[timeEntry.get("id")], function(timeBar) {
-                    this._setTimeBarAttributes(timeBar, timeEntry);
-                }, this);
-            } else if (property === "startHour" || property == "endHour") {
-                this._adjustTimeBars(timeEntry);
-            }
+        _timeEntryChanged: function(timeEntry) {
+            this._adjustTimeBars(timeEntry);
+            _.forEach(this._timeBarsByTimeEntryId[timeEntry.get("id")], function(timeBar) {
+                this._setTimeBarAttributes(timeBar, timeEntry);
+            }, this);
         },
 
         _adjustTimeBars: function(timeEntry) {

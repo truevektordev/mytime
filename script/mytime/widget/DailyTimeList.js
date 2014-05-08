@@ -6,6 +6,7 @@ define([
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry",
     "dojo/Evented", "dojo/store/Observable", "dojo/date", "dojo/date/locale",
     "dijit/_WidgetBase", "dijit/_TemplatedMixin",
+    "dgrid/OnDemandList",
     "mytime/util/DateTimeUtil", "mytime/util/Colors",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
@@ -17,6 +18,7 @@ function (declare,
     domConstruct, domClass, domStyle, domGeometry,
     Evented, Observable, dojoDate, dateLocale,
     _WidgetBase, _TemplatedMixin,
+    List,
     DateTimeUtil, Colors,
     template, editTemplate) {
 
@@ -57,33 +59,26 @@ function (declare,
         },
 
         _render: function() {
-            this.domNode.innerHTML = '';
-            this._entries = {};
-            if (this._timeEntryStoreObserveHandle) {
-                this._timeEntryStoreObserveHandle.remove();
-            }
-            var tasks = this.timeEntryStore.query({date: this.date}, {sort: [{attribute: "startHour"}]});
-            this._timeEntryStoreObserveHandle = tasks.observe(lang.hitch(this, '_timeEntryStoreObserver'), true);
+            var list = new List({
+                store: this.timeEntryStore,
+                query: {date: this.date},
+                sort: [{attribute: "startHour"}],
+                renderRow: lang.hitch(this, '_renderEntry')
+            });
+
+            domConstruct.place(list.domNode, this.domNode);
         },
 
-        _timeEntryStoreObserver: function(object, removedFrom, insertedInto) {
-            if (removedFrom > -1) {
-                this._timeEntryRemoved(object);
-            }
-            if (insertedInto > -1) {
-                this._timeEntryAdded(object, insertedInto);
-            }
-        },
-
-        _timeEntryAdded: function(timeEntry, index) {
+        _renderEntry: function(timeEntry) {
             var task = null;
+            timeEntry.taskId = timeEntry.id;
             if (timeEntry.taskId) {
                 task = this.taskStore.get(timeEntry.taskId);
             }
-            this._renderEntry(timeEntry, task, index);
+            return this._renderEntryWithTask(timeEntry, task);
         },
 
-        _renderEntry: function(timeEntry, task, index) {
+        _renderEntryWithTask: function(timeEntry, task) {
             var data = {
                 Colors: Colors,
                 text: timeEntry.text || '',
@@ -97,14 +92,7 @@ function (declare,
                 data.color = task.color;
             }
             var html = _.template(template, data);
-            var previousEntry = this._entries[timeEntry.id];
-            if (previousEntry) {
-                domConstruct.destroy(previousEntry.dom);
-            }
-            this._entries[timeEntry.id] = {
-                dom: domConstruct.place(html, this.domNode, index),
-                index: index
-            };
+            return domConstruct.toDom(html);
         }
 
 

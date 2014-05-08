@@ -137,6 +137,7 @@ function (_, declare, lang, EnhancedMemoryStore, _StatefulSettersMixin, setIfDif
             var endHour = this._constrainEndHour(timeEntry.endHour);
             setIfDifferent(internalTimeEntry, "startHour", startHour);
             setIfDifferent(internalTimeEntry, "endHour", endHour);
+            this.put(timeEntry);
         },
 
         _constrainStartHour: function(startHour) {
