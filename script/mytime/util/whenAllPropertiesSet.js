@@ -3,6 +3,14 @@ define([
 ], function(
     _
 ) {
+    /**
+     * Call the callback as soon as all the properties on the object are truthy for the first time. The callback will be
+     * called at most once.
+     *
+     * @param {dojo/Stateful} object stateful object on which the properties are found
+     * @param {Array.<string>} properties names of one or more properties
+     * @param {function} callback No parameters are passed to the callback.
+     */
     return function(object, properties, callback) {
         // remove properties that are already set
         properties = _.filter(properties, function(property) {
