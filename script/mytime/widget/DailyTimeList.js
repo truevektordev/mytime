@@ -68,7 +68,6 @@ function (declare,
 
         _renderEntry: function(timeEntry) {
             var task = null;
-            timeEntry.taskId = timeEntry.id;
             if (timeEntry.taskId) {
                 task = this.taskStore.get(timeEntry.taskId);
             }
@@ -78,15 +77,18 @@ function (declare,
         _renderEntryWithTask: function(timeEntry, task) {
             var data = {
                 Colors: Colors,
+                timeEntryId: timeEntry.id,
+                taskId: "",
                 text: timeEntry.text || "",
-                code: "&nbsp;",
-                name: "",
+                code: "[&nbsp;&nbsp;&nbsp;]",
+                name: "No Task",
                 color: null
             };
             if (task) {
+                data.taskId = task.id || "";
                 data.code = task.code || "&nbsp;";
                 data.name = task.name || "";
-                data.color = task.color;
+                data.color = task.color || null;
             }
             var html = _.template(template, data);
             return domConstruct.toDom(html);
