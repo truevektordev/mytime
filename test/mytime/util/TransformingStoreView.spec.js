@@ -35,11 +35,6 @@ define([
             });
         }
 
-        function observe(thisObject) {
-            store.query({}, {sort: [{attribute: "sort"}]}).observe(
-                delegateObserve(insertSpy, removeSpy, updateSpy, thisObject), true);
-        }
-
         it("transforms initial results", function() {
             var store = setup();
             var queryResults = store.query();
