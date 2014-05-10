@@ -48,7 +48,7 @@ define([
                     command.reject(error);
                     return;
                 }
-                existingEntry.updateFrom(command.timeEntry, true);
+                existingEntry.updateFrom(command.timeEntry);
                 console.log('PUT ' + JSON.stringify(existingEntry));
                 this._timeEntryStore.put(existingEntry);
                 command.resolve({timeEntryId: existingEntry.get('id'), timeEntry: existingEntry});

@@ -1,4 +1,5 @@
 define([
+    'test/mytime/model/_ModelBase.spec',
     'test/mytime/util/DateTimeUtil.spec',
     'test/mytime/util/delegateObserve.spec',
     'test/mytime/util/TransformingStoreView.spec',

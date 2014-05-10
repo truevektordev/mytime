@@ -56,7 +56,7 @@ define([
                     command.reject(error);
                     return;
                 }
-                existingEntry.updateFrom(command.task, true);
+                existingEntry.updateFrom(command.task);
                 console.log('PUT ' + JSON.stringify(existingEntry));
                 this._taskStore.put(existingEntry);
                 command.resolve({taskId: existingEntry.get('id'), task: existingEntry});

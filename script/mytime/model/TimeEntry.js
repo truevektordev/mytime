@@ -1,31 +1,16 @@
 define([
-    "module", "dojo/_base/declare",
-    "dojo/Stateful",
-    "mytime/util/setIfDifferent"
-],
-function (module, declare, Stateful, setIfDifferent) {
-    return declare(module.id, [Stateful], {
+        "module", "dojo/_base/declare",
+        "mytime/model/_ModelBase"
+], function (module, declare, _ModelBase) {
+    return declare(module.id, [_ModelBase], {
+        _propertyNames: ["id", "date", "startHour", "endHour", "text", "taskId"],
+
         id: null,
         date: null,
         startHour: null,
         endHour: null,
 
         text: null,
-        taskId: null,
-
-        constructor: function(values) {
-            if (typeof values === 'object') {
-                this.updateFrom(values, true);
-            }
-        },
-
-        updateFrom: function(properties, ignoreEmptyProperties) {
-            var copyEveryProperty = !ignoreEmptyProperties;
-            _.forEach(["id", "date", "startHour", "endHour", "text", "taskId"], function(property) {
-                if (copyEveryProperty || properties.hasOwnProperty(property)) {
-                    setIfDifferent(this, property, properties[property]);
-                }
-            }, this);
-        }
+        taskId: null
     });
 });
