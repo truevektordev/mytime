@@ -1,25 +1,20 @@
 define([
-    "dojo/_base/declare",
-    "lodash",
-    "dojo/_base/lang",
-    "dojo/string", "dojo/on", "dojo/query",
-    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-style", "dojo/dom-geometry",
-    "dojo/Evented", "dojo/store/Observable", "dojo/date", "dojo/date/locale",
+    "lodash", "dojo/_base/lang", "dojo/_base/declare",
+    "dojo/dom-construct", "dojo/Evented",
     "dijit/_WidgetBase",
-    "dgrid/OnDemandList",
-    "mytime/util/DateTimeUtil", "mytime/util/Colors", "mytime/util/whenAllPropertiesSet",
+    "mytime/model/TimeEntry",
+    "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/TransformingStoreView",
+    "mytime/util/StoreDrivenDom",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
 ],
-function (declare,
-    _,
-    lang,
-    stringUtil, on, query,
-    domConstruct, domClass, domStyle, domGeometry,
-    Evented, Observable, dojoDate, dateLocale,
+function (
+    _, lang, declare,
+    domConstruct, Evented,
     _WidgetBase,
-    List,
-    DateTimeUtil, Colors, whenAllPropertiesSet,
+    TimeEntry,
+    Colors, whenAllPropertiesSet, TransformingStoreView,
+    StoreDrivenDom,
     template, editTemplate) {
 
     /**
@@ -33,34 +28,41 @@ function (declare,
         timeEntryStore: null,
         taskStore: null,
 
-        editingTimeEntryId: null,
+        selectedIds: null,
+        editingId: null,
 
-        _entries: null,
+        _internalStore: null,
         _list: null,
-        _timeEntryStoreObserveHandle: null,
-        _taskStoreObserveHandle: null,
 
         buildRendering: function() {
             this.inherited(arguments);
         },
 
         postCreate: function() {
-            this._entries = {};
             this.own(
                 whenAllPropertiesSet(this, ["date", "timeEntryStore", "taskStore"], lang.hitch(this, "_initialize"))
             );
         },
         
         _initialize: function() {
-            this._list = new List({
-                store: this.timeEntryStore,
-                query: {date: this.date},
-                sort: [{attribute: "startHour"}],
-                renderRow: lang.hitch(this, "_renderEntry")
+            this._internalStore = new TransformingStoreView({
+                sourceStore: this.timeEntryStore,
+                sourceQuery: {date: this.date},
+                transform: lang.hitch(this, function(input) {
+                    var entry = new TimeEntry(input);
+                    entry.selected = _.contains(this.selectedIds, entry.id);
+                    entry.editing = entry.id === this.editingId;
+                    return entry;
+                })
+            }).getObservable();
+            this._list = new StoreDrivenDom({
+                store: this._internalStore,
+                queryOptions: {sort: [{attribute: "startHour"}]},
+                renderNode: lang.hitch(this, "_renderEntry")
             });
 
-            domConstruct.place(this._list.domNode, this.domNode);
-            
+            this._list.placeAt(this.domNode);
+
             this.own(
                 this.watch("date", lang.hitch(this, "_dateChanged"))
             );
@@ -95,7 +97,7 @@ function (declare,
         },
 
         _dateChanged: function() {
-            this._list.set("query", {date: this.date});
+            this._internalStore.set("sourceQuery", {date: this.date});
         }
 
     });
