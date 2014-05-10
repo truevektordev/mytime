@@ -1,11 +1,11 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
-    "dojo/Stateful", "dojo/when",
+    "dojo/Stateful", "dojo/when", "dojo/aspect", "dojo/store/Observable",
     "dijit/Destroyable",
     "mytime/util/EnhancedMemoryStore", "mytime/util/delegateObserve"
 ], function(
     _, lang, declare,
-    Stateful, when,
+    Stateful, when, aspect, Observable,
     Destroyable,
     EnhancedMemoryStore, delegateObserve
 ) {
@@ -14,6 +14,9 @@ define([
      *
      * An EnhancedMemoryStore that mirrors the results of a query against another store, but contains a transformed
      * version of the elements in that other store. Additionally some items may be excluded.
+     *
+     * NOTE: Because of an internal issue with Observable, this store cannot be observed by the normal means:
+     * new Observable(transformingStoreView). Use getObservable() instead: transformingStoreView.getObservable();
      */
     return declare([EnhancedMemoryStore, Stateful, Destroyable], {
 
@@ -42,6 +45,25 @@ define([
         transform: null,
 
         _observeHandle: null,
+
+        /**
+         * Because of an internal issue with Observable, this store cannot be observed by the normal means:
+         * new Observable(transformingStoreView). Use this function instead: transformingStoreView.getObservable();
+         * @returns {Observable}
+         */
+        getObservable: function() {
+            var observable = new Observable(this);
+            this.own(aspect.before(this, "_notifyObservable", lang.hitch(observable, "notify")));
+            return observable;
+        },
+
+        get: function(prop) {
+            if (_.contains(["sourceStore", "sourceQuery", "transform"], prop)) {
+                return Stateful.prototype.get.apply(this, arguments);
+            } else {
+                return EnhancedMemoryStore.prototype.get.apply(this, arguments);
+            }
+        },
 
         constructor: function(args) {
             lang.mixin(this, args);
@@ -82,6 +104,7 @@ define([
             var transformed = this.transform(object);
             if (transformed) {
                 this.put(transformed);
+                this._notifyObservable(transformed);
             }
         },
 
@@ -91,8 +114,11 @@ define([
             var transformed = this.transform(object, previous);
             if (transformed) {
                 this.put(transformed);
+                var previousId = previous ? id : undefined;
+                this._notifyObservable(transformed, previousId);
             } else {
                 this.remove(id);
+                this._notifyObservable(undefined, id);
             }
         },
 
@@ -100,6 +126,13 @@ define([
             var id = this.sourceStore.getIdentity(object);
             if (id) {
                 this.remove(id);
+                this._notifyObservable(undefined, id);
+            }
+        },
+
+        _notifyObservable: function(object, previousId) {
+            if (typeof this.notify === 'function') {
+                this.notify(object, previousId);
             }
         },
 
@@ -111,4 +144,5 @@ define([
         }
 
     });
+
 });

@@ -92,9 +92,27 @@ define([
             expect(queryResults[1]).to.deep.equal({id: "b", sort: 200});
             expect(queryResults[2]).to.deep.equal({id: "c", sort: 350});
         });
-        it("notifies when result added");
-        it("notifies when result removed");
-        it("notifies when result updated");
+        it("notifies when result added", function() {
+            var store = setup().getObservable();
+            store.query().observe(observer);
+            source.put({id: "d", sort: 40});
+            expect(observer).to.be.calledOnce;
+            expect(observer).to.be.calledWith({id: "d", sort: 400}, -1, 3);
+        });
+        it("notifies when result removed", function() {
+            var store = setup().getObservable();
+            store.query().observe(observer);
+            source.remove("c");
+            expect(observer).to.be.calledOnce;
+            expect(observer).to.be.calledWith({id: "c", sort: 300}, 2, -1);
+        });
+        it("notifies when result updated", function() {
+            var store = setup().getObservable();
+            store.query({}, {sort: [{attribute: "sort"}]}).observe(observer);
+            source.put({id: "c", sort: 5});
+            expect(observer).to.be.calledOnce;
+            expect(observer).to.be.calledWith({id: "c", sort: 50}, 2, 0);
+        });
         it("does not add an item when transform returns falsy", function() {
             var store = setup();
             source.put({id: "d", sort: 40, exclude: true});
