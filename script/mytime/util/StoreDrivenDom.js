@@ -73,7 +73,7 @@ define([
             }
             this.domNode.innerHTML = '';
 
-            var queryResult = this.store.query(this.query);
+            var queryResult = this.store.query(this.query, this.queryOptions);
             this._observeHandle = queryResult.observe(lang.hitch(this, "_observer"), true);
 
             when(queryResult, lang.hitch(this, function(results) {
