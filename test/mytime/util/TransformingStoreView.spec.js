@@ -35,6 +35,12 @@ define([
             });
         }
 
+        function setupWithObserver() {
+            var observable = setup().getObservable();
+            observable.query().observe(observer);
+            return observable;
+        }
+
         it("transforms initial results", function() {
             var store = setup();
             var queryResults = store.query();
@@ -93,15 +99,13 @@ define([
             expect(queryResults[2]).to.deep.equal({id: "c", sort: 350});
         });
         it("notifies when result added", function() {
-            var store = setup().getObservable();
-            store.query().observe(observer);
+            setupWithObserver();
             source.put({id: "d", sort: 40});
             expect(observer).to.be.calledOnce;
             expect(observer).to.be.calledWith({id: "d", sort: 400}, -1, 3);
         });
         it("notifies when result removed", function() {
-            var store = setup().getObservable();
-            store.query().observe(observer);
+            setupWithObserver();
             source.remove("c");
             expect(observer).to.be.calledOnce;
             expect(observer).to.be.calledWith({id: "c", sort: 300}, 2, -1);
@@ -112,6 +116,17 @@ define([
             source.put({id: "c", sort: 5});
             expect(observer).to.be.calledOnce;
             expect(observer).to.be.calledWith({id: "c", sort: 50}, 2, 0);
+        });
+        it("notifies removal of all items then addition of all items when sourceQuery changed", function() {
+            var store = setupWithObserver();
+//            var store = setup();
+            store.set("sourceQuery", {id: "b"});
+            expect(store.query().length).to.equal(1);
+            expect(observer.callCount).to.equal(4);
+            expect(observer).to.be.calledWith({id: "c", sort: 300}, 2, -1);
+            expect(observer).to.be.calledWith({id: "b", sort: 200}, 1, -1);
+            expect(observer).to.be.calledWith({id: "a", sort: 100}, 0, -1);
+            expect(observer).to.be.calledWith({id: "b", sort: 200}, -1, 0);
         });
         it("does not add an item when transform returns falsy", function() {
             var store = setup();

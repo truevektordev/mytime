@@ -1,12 +1,10 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/Stateful", "dojo/when", "dojo/aspect", "dojo/store/Observable",
-    "dijit/Destroyable",
     "mytime/util/EnhancedMemoryStore", "mytime/util/delegateObserve"
 ], function(
     _, lang, declare,
     Stateful, when, aspect, Observable,
-    Destroyable,
     EnhancedMemoryStore, delegateObserve
 ) {
     /**
@@ -18,7 +16,7 @@ define([
      * NOTE: Because of an internal issue with Observable, this store cannot be observed by the normal means:
      * new Observable(transformingStoreView). Use getObservable() instead: transformingStoreView.getObservable();
      */
-    return declare([EnhancedMemoryStore, Stateful, Destroyable], {
+    return declare([EnhancedMemoryStore, Stateful], {
 
         /**
          * Source store from which to draw items. Must be Observable.
@@ -44,19 +42,35 @@ define([
          */
         transform: null,
 
+        /**
+         * Either this object or the observable created in getObservable() if it has been called. This is used to make
+         * sure put, remove and add calls made internally are executed against the Observable when appropriate.
+         */
+        _pointerToThis: null,
+        /**
+         * The Observable created in getObservable(). Stored in order to return the same observable to subsequent calls.
+         */
+        _observable: null,
+
+        _watchHandles: null,
         _observeHandle: null,
 
         /**
-         * Because of an internal issue with Observable, this store cannot be observed by the normal means:
+         * Because of complications with Observable, this store cannot be observed by the normal means:
          * new Observable(transformingStoreView). Use this function instead: transformingStoreView.getObservable();
          * @returns {Observable}
          */
         getObservable: function() {
-            var observable = new Observable(this);
-            this.own(aspect.before(this, "_notifyObservable", lang.hitch(observable, "notify")));
-            return observable;
+            if (!this._observable) {
+                this._observable = new Observable(this);
+                this._pointerToThis = this._observable;
+            }
+            return this._observable;
         },
-
+        /**
+         * Override in order to direct either to Stateful.get or EnhancedMemoryStore.get since both mixed in methods
+         * have the same name.
+         */
         get: function(prop) {
             if (_.contains(["sourceStore", "sourceQuery", "transform"], prop)) {
                 return Stateful.prototype.get.apply(this, arguments);
@@ -65,13 +79,31 @@ define([
             }
         },
 
-        constructor: function(args) {
-            lang.mixin(this, args);
+        postscript: function() {
+            this.inherited(arguments);
+            this._pointerToThis = this;
+            this._bindMethodsToPointerToThis();
             var _refreshWatcher = lang.hitch(this, "_refreshWatcher");
             this.watch("sourceStore", _refreshWatcher);
             this.watch("sourceQuery", _refreshWatcher);
             this.watch("transform", _refreshWatcher);
             this._refreshIfReady();
+        },
+
+        /**
+         * In order to make everything work correctly we need all the methods to be fired in the context of the
+         * observable (if any) rather than the underlying store. This method sets all the other methods up to make sure
+         * they do that.
+         * @private
+         */
+        _bindMethodsToPointerToThis: function() {
+            _.forEach(["_refreshWatcher", "_refreshIfReady", "refresh", "_onInsert", "_onUpdate", "_onRemove"],
+                function(fnName) {
+                    var originalFn = this[fnName];
+                    this[fnName] = function() {
+                        originalFn.apply(this._pointerToThis, arguments);
+                    }
+            }, this);
         },
 
         _refreshWatcher: function(property, oldValue, value) {
@@ -89,6 +121,7 @@ define([
         refresh: function() {
             if (this._observeHandle) {
                 this._observeHandle.remove();
+                this._observeHandle = null;
             }
             this.clear();
 
@@ -104,7 +137,6 @@ define([
             var transformed = this.transform(object);
             if (transformed) {
                 this.put(transformed);
-                this._notifyObservable(transformed);
             }
         },
 
@@ -114,11 +146,8 @@ define([
             var transformed = this.transform(object, previous);
             if (transformed) {
                 this.put(transformed);
-                var previousId = previous ? id : undefined;
-                this._notifyObservable(transformed, previousId);
             } else {
                 this.remove(id);
-                this._notifyObservable(undefined, id);
             }
         },
 
@@ -126,13 +155,6 @@ define([
             var id = this.sourceStore.getIdentity(object);
             if (id) {
                 this.remove(id);
-                this._notifyObservable(undefined, id);
-            }
-        },
-
-        _notifyObservable: function(object, previousId) {
-            if (typeof this.notify === 'function') {
-                this.notify(object, previousId);
             }
         },
 

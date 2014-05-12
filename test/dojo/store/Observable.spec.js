@@ -45,6 +45,18 @@ define(["dojo/store/Memory", "dojo/store/Observable", "dojo/Stateful"], function
             expect(spy).to.have.been.calledWith(b, -1, 1);
         });
 
+        it("does not notify when changes are made to the underlying store without going through the Observable", function() {
+            var originalStore = new MemoryStore();
+            var observableStore = new Observable(originalStore);
+
+            var spy = sinon.spy();
+            observableStore.query().observe(spy);
+            originalStore.put({id: 1, note: "put in original store"});
+            observableStore.put({id: 2, note: "put in observable store"});
+            expect(spy).to.have.been.calledOnce;
+            expect(spy).to.have.been.calledWith({id: 2, note: "put in observable store"}, -1, sinon.match.number);
+        });
+
     });
 
 });
