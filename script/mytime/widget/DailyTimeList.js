@@ -1,6 +1,6 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
-    "dojo/dom-construct", "dojo/Evented",
+    "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/Evented",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/TransformingStoreView",
@@ -10,7 +10,7 @@ define([
 ],
 function (
     _, lang, declare,
-    domConstruct, Evented,
+    domConstruct, domAttr, on, Evented,
     _WidgetBase,
     TimeEntry,
     Colors, whenAllPropertiesSet, TransformingStoreView,
@@ -39,8 +39,13 @@ function (
         },
 
         postCreate: function() {
+            var _this = this;
             this.own(
-                whenAllPropertiesSet(this, ["date", "timeEntryStore", "taskStore"], lang.hitch(this, "_initialize"))
+                whenAllPropertiesSet(this, ["date", "timeEntryStore", "taskStore"], lang.hitch(this, "_initialize")),
+                on(this.domNode, on.selector(".timeentry", "click"), function() {
+                    // NOTE: for 'on' with selector, 'this' is the node identified by the selector.
+                    _this._onEntryClick(this);
+                })
             );
         },
         
@@ -64,7 +69,8 @@ function (
             this._list.placeAt(this.domNode);
 
             this.own(
-                this.watch("date", lang.hitch(this, "_dateChanged"))
+                this.watch("date", lang.hitch(this, "_dateChanged")),
+                this.watch("editingId", lang.hitch(this, "_editingIdChanged"))
             );
         },
 
@@ -92,12 +98,30 @@ function (
                 data.name = task.name || "";
                 data.color = task.color || null;
             }
-            var html = _.template(template, data);
+            var templateToUse = timeEntry.editing ? editTemplate : template;
+
+            var html = _.template(templateToUse, data);
             return domConstruct.toDom(html);
         },
 
         _dateChanged: function() {
             this._internalStore.set("sourceQuery", {date: this.date});
+        },
+
+        _onEntryClick: function(entryNode) {
+            var id = domAttr.get(entryNode, "data-timeentry-id");
+            this.set("editingId", id);
+        },
+
+        _editingIdChanged: function(prop, prevValue, value) {
+            if (value !== prevValue) {
+                if (prevValue) {
+                    this._internalStore.refreshItem(prevValue);
+                }
+                if (value) {
+                    this._internalStore.refreshItem(value);
+                }
+            }
         }
 
     });
