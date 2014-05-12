@@ -9,10 +9,12 @@ define([
     describe("mytime/util/TransformingStoreView", function() {
 
         var source;
+        var unobservedSource;
         var observer;
         var transformer;
         beforeEach(function() {
-            source = new Observable(new Memory());
+            unobservedSource = new Memory();
+            source = new Observable(unobservedSource);
             source.add({id: "a", sort: 10});
             source.add({id: "b", sort: 20});
             source.add({id: "c", sort: 30});
@@ -147,6 +149,58 @@ define([
             expect(queryResults).to.have.length(2);
             expect(queryResults[0]).to.deep.equal({id: "a", sort: 100});
             expect(queryResults[1]).to.deep.equal({id: "c", sort: 500});
+        });
+
+        describe("#refreshItem", function() {
+            it("adds item if missing from view and notifies", function() {
+                var store = setupWithObserver();
+                // secretly add data without notifying the observer...
+                unobservedSource.put({id: "d", sort: 40});
+                expect(store.query()).to.have.length(3);
+                expect(observer).not.to.be.called;
+
+                store.refreshItem("d");
+                var queryResults = store.query();
+                expect(queryResults).to.have.length(4);
+                expect(queryResults[0]).to.deep.equal({id: "a", sort: 100});
+                expect(queryResults[1]).to.deep.equal({id: "b", sort: 200});
+                expect(queryResults[2]).to.deep.equal({id: "c", sort: 300});
+                expect(queryResults[3]).to.deep.equal({id: "d", sort: 400});
+                expect(observer).to.be.calledOnce;
+                expect(observer).to.be.calledWith({id: "d", sort: 400}, -1, 3);
+
+            });
+            it("removes item if missing from source and notifies", function() {
+                var store = setupWithObserver();
+                // secretly remove data without notifying the observer...
+                unobservedSource.remove("c");
+                expect(store.query()).to.have.length(3);
+                expect(observer).not.to.be.called;
+
+                store.refreshItem("c");
+                var queryResults = store.query();
+                expect(queryResults).to.have.length(2);
+                expect(queryResults[0]).to.deep.equal({id: "a", sort: 100});
+                expect(queryResults[1]).to.deep.equal({id: "b", sort: 200});
+                expect(observer).to.be.calledOnce;
+                expect(observer).to.be.calledWith({id: "c", sort: 300}, 2, -1);
+            });
+            it("updates item if changed and notifies", function() {
+                var store = setup().getObservable();
+                store.query({}, {sort: [{attribute: "sort"}]}).observe(observer);
+                // secretly remove data without notifying the observer...
+                unobservedSource.put({id: "c", sort: 5});
+                expect(observer).not.to.be.called;
+
+                store.refreshItem("c");
+                var queryResults = store.query({}, {sort: [{attribute: "sort"}]});
+                expect(queryResults).to.have.length(3);
+                expect(queryResults[0]).to.deep.equal({id: "c", sort: 50});
+                expect(queryResults[1]).to.deep.equal({id: "a", sort: 100});
+                expect(queryResults[2]).to.deep.equal({id: "b", sort: 200});
+                expect(observer).to.be.calledOnce;
+                expect(observer).to.be.calledWith({id: "c", sort: 50}, 2, 0);
+            });
         });
 
     });

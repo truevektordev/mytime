@@ -97,7 +97,8 @@ define([
          * @private
          */
         _bindMethodsToPointerToThis: function() {
-            _.forEach(["_refreshWatcher", "_refreshIfReady", "refresh", "_onInsert", "_onUpdate", "_onRemove"],
+            _.forEach(["_refreshWatcher", "_refreshIfReady", "refresh", "refreshItem",
+                    "_onInsert", "_onUpdate", "_onRemove"],
                 function(fnName) {
                     var originalFn = this[fnName];
                     this[fnName] = function() {
@@ -131,6 +132,15 @@ define([
             when(queryResult, lang.hitch(this, function(results) {
                 _.forEach(results, lang.hitch(this, "_onInsert"));
             }));
+        },
+
+        refreshItem: function(id) {
+            var object = this.sourceStore.get(id);
+            if (object) {
+                this._onUpdate(object);
+            } else {
+                this.remove(id);
+            }
         },
 
         _onInsert: function(object) {
