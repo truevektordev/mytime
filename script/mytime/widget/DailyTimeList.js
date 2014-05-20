@@ -1,7 +1,7 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
-    "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/Evented",
-    "dijit/_WidgetBase",
+    "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
+    "dijit/_WidgetBase", "dijit/form/ComboBox",
     "mytime/model/TimeEntry",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
     "mytime/util/store/StoreDrivenDom",
@@ -10,8 +10,8 @@ define([
 ],
 function (
     _, lang, declare,
-    domConstruct, domAttr, on, Evented,
-    _WidgetBase,
+    domConstruct, domAttr, on, query, Evented,
+    _WidgetBase, ComboBox,
     TimeEntry,
     Colors, whenAllPropertiesSet, TransformingStoreView,
     StoreDrivenDom,
@@ -34,6 +34,8 @@ function (
         _internalStore: null,
         _list: null,
 
+        _taskCombo: null,
+
         buildRendering: function() {
             this.inherited(arguments);
         },
@@ -50,6 +52,7 @@ function (
         },
         
         _initialize: function() {
+            this._setupTaskCombo();
             this._internalStore = new TransformingStoreView({
                 sourceStore: this.timeEntryStore,
                 sourceQuery: {date: this.date},
@@ -71,6 +74,16 @@ function (
             this.own(
                 this.watch("date", lang.hitch(this, "_dateChanged")),
                 this.watch("editingId", lang.hitch(this, "_editingIdChanged"))
+            );
+        },
+
+        _setupTaskCombo: function() {
+            this._taskCombo = new ComboBox({
+                store: this.taskStore,
+                searchAttr: "code"
+            });
+            this.own(
+                on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange"))
             );
         },
 
@@ -98,10 +111,24 @@ function (
                 data.name = task.name || "";
                 data.color = task.color || null;
             }
-            var templateToUse = timeEntry.editing ? editTemplate : template;
+            if (timeEntry.editing) {
+                return this._renderEditingEntry(data);
+            } else {
+                var html = _.template(template, data);
+                return domConstruct.toDom(html);
+            }
+        },
 
-            var html = _.template(templateToUse, data);
-            return domConstruct.toDom(html);
+        _renderEditingEntry: function(data) {
+            var html = _.template(editTemplate, data);
+            var dom = domConstruct.toDom(html);
+
+            var comboContainer = query(".task", dom)[0];
+            this._taskCombo.set("value", data.taskId ? data.code : "");
+            this._taskCombo.placeAt(comboContainer);
+            this._taskCombo.startup();
+
+            return dom;
         },
 
         _dateChanged: function() {
@@ -122,6 +149,10 @@ function (
                     this._internalStore.refreshItem(value);
                 }
             }
+        },
+
+        _onTaskComboChange: function() {
+
         }
 
     });
