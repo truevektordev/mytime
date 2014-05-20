@@ -1,7 +1,7 @@
 define([
     'mytime/model/modelRegistry',
     'mytime/controller/TimeEntryController', 'mytime/controller/TaskController',
-    'mytime/util/EnhancedMemoryStore',
+    'mytime/util/store/EnhancedMemoryStore',
     'mytime/mock-data'
 ], function(
     modelRegistry,

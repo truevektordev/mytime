@@ -1,6 +1,6 @@
 define([
     "dojo/query", "dojo/dom-class", "dojo/dom-style", "dojo/Stateful",
-    "mytime/model/TimeEntry", "mytime/util/EnhancedMemoryStore",
+    "mytime/model/TimeEntry", "mytime/util/store/EnhancedMemoryStore",
     "mytime/widget/DailyTimeWidget/DailyTimeWidgetView",
 ], function(
     query, domClass, domStyle, Stateful,

@@ -1,7 +1,7 @@
 define([
     "lodash",
     "dojo/_base/declare", "dojo/_base/lang",
-    "mytime/util/EnhancedMemoryStore", "mytime/util/_StatefulSettersMixin", "mytime/util/setIfDifferent",
+    "mytime/util/store/EnhancedMemoryStore", "mytime/util/_StatefulSettersMixin", "mytime/util/setIfDifferent",
     "mytime/model/TimeEntry"
 ],
 function (_, declare, lang, EnhancedMemoryStore, _StatefulSettersMixin, setIfDifferent, TimeEntry) {

@@ -1,7 +1,7 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/Stateful", "dojo/when", "dojo/aspect", "dojo/store/Observable",
-    "mytime/util/EnhancedMemoryStore", "mytime/util/delegateObserve"
+    "mytime/util/store/EnhancedMemoryStore", "mytime/util/store/delegateObserve"
 ], function(
     _, lang, declare,
     Stateful, when, aspect, Observable,

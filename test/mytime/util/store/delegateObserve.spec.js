@@ -1,12 +1,12 @@
 define([
     "dojo/store/Memory", "dojo/store/Observable",
-    "mytime/util/delegateObserve"
+    "mytime/util/store/delegateObserve"
 ], function(
     Memory, Observable,
     delegateObserve
 ) {
 
-    describe("mytime/util/delegateObserve", function() {
+    describe("mytime/util/store/delegateObserve", function() {
 
         var store;
         var insertSpy, removeSpy, updateSpy;

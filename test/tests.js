@@ -1,9 +1,9 @@
 define([
     'test/mytime/model/_ModelBase.spec',
     'test/mytime/util/DateTimeUtil.spec',
-    'test/mytime/util/delegateObserve.spec',
-    'test/mytime/util/StoreDrivenDom.spec',
-    'test/mytime/util/TransformingStoreView.spec',
+    'test/mytime/util/store/delegateObserve.spec',
+    'test/mytime/util/store/StoreDrivenDom.spec',
+    'test/mytime/util/store/TransformingStoreView.spec',
     'test/mytime/util/whenAllPropertiesSet.spec',
     'test/mytime/widget/DailyTimeWidget/DailyTimeWidgetView.spec',
 

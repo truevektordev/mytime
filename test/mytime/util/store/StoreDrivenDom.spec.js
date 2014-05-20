@@ -1,12 +1,12 @@
 define([
     "dojo/store/Memory", "dojo/store/Observable", "dojo/dom-construct",
-    "mytime/util/StoreDrivenDom"
+    "mytime/util/store/StoreDrivenDom"
 ], function(
     Memory, Observable, domConstruct,
     StoreDrivenDom
     ) {
 
-    describe("mytime/util/StoreDrivenDom", function() {
+    describe("mytime/util/store/StoreDrivenDom", function() {
 
         var source;
         var renderer;

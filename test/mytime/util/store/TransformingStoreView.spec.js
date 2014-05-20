@@ -1,12 +1,12 @@
 define([
     "dojo/store/Memory", "dojo/store/Observable",
-    "mytime/util/TransformingStoreView"
+    "mytime/util/store/TransformingStoreView"
 ], function(
     Memory, Observable,
     TransformingStoreView
 ) {
 
-    describe("mytime/util/TransformingStoreView", function() {
+    describe("mytime/util/store/TransformingStoreView", function() {
 
         var source;
         var unobservedSource;

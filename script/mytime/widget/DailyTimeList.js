@@ -3,8 +3,8 @@ define([
     "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/Evented",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
-    "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/TransformingStoreView",
-    "mytime/util/StoreDrivenDom",
+    "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
+    "mytime/util/store/StoreDrivenDom",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
 ],

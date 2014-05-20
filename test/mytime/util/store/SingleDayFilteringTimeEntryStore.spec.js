@@ -1,6 +1,6 @@
-describe("mytime/util/SingleDayFilteringTimeEntryStore", function() {
+describe("mytime/util/store/SingleDayFilteringTimeEntryStore", function() {
 
-    var SingleDayFilteringTimeEntryStore = demand("mytime/util/SingleDayFilteringTimeEntryStore");
+    var SingleDayFilteringTimeEntryStore = demand("mytime/util/store/SingleDayFilteringTimeEntryStore");
     var TimeEntry = demand("mytime/model/TimeEntry");
     var MemoryStore = demand("dojo/store/Memory");
     var Observable = demand("dojo/store/Observable");

@@ -3,7 +3,7 @@ define([
     "dojo/_base/lang", "dojo/_base/declare", "dojo/Evented", "dojo/store/Observable",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
-    "mytime/util/DateTimeUtil", "mytime/util/SingleDayFilteringTimeEntryStore", "mytime/util/syncFrom",
+    "mytime/util/DateTimeUtil", "mytime/util/store/SingleDayFilteringTimeEntryStore", "mytime/util/syncFrom",
     "mytime/widget/DailyTimeWidget/DailyTimeWidgetView"
 ],
 function (

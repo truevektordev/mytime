@@ -1,6 +1,6 @@
-describe("mytime/util/EnhancedMemoryStore", function() {
+describe("mytime/util/store/EnhancedMemoryStore", function() {
 
-    var EnhancedMemoryStore = demand("mytime/util/EnhancedMemoryStore");
+    var EnhancedMemoryStore = demand("mytime/util/store/EnhancedMemoryStore");
 
     it("size()", function() {
         var store = new EnhancedMemoryStore();
