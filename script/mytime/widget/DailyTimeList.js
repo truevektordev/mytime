@@ -1,8 +1,10 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
-    "dijit/_WidgetBase", "dijit/form/ComboBox",
+    "dijit/_WidgetBase",
+    "mytime/widget/TaskPickerDropdown",
     "mytime/model/TimeEntry",
+    "mytime/command/UpdateTimeEntryCommand",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
     "mytime/util/store/StoreDrivenDom",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
@@ -11,8 +13,10 @@ define([
 function (
     _, lang, declare,
     domConstruct, domAttr, on, query, Evented,
-    _WidgetBase, ComboBox,
+    _WidgetBase,
+    TaskPickerDropdown,
     TimeEntry,
+    UpdateTimeEntryCommand,
     Colors, whenAllPropertiesSet, TransformingStoreView,
     StoreDrivenDom,
     template, editTemplate) {
@@ -30,6 +34,7 @@ function (
 
         selectedIds: null,
         editingId: null,
+        _editingStartData: null,
 
         _internalStore: null,
         _list: null,
@@ -78,9 +83,8 @@ function (
         },
 
         _setupTaskCombo: function() {
-            this._taskCombo = new ComboBox({
-                store: this.taskStore,
-                searchAttr: "code"
+            this._taskCombo = new TaskPickerDropdown({
+                store: this.taskStore
             });
             this.own(
                 on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange"))
@@ -112,19 +116,24 @@ function (
                 data.color = task.color || null;
             }
             if (timeEntry.editing) {
-                return this._renderEditingEntry(data);
+                return this._renderEditingEntry(timeEntry, task, data);
             } else {
                 var html = _.template(template, data);
                 return domConstruct.toDom(html);
             }
         },
 
-        _renderEditingEntry: function(data) {
+        _renderEditingEntry: function(timeEntry, task, data) {
             var html = _.template(editTemplate, data);
             var dom = domConstruct.toDom(html);
 
+            this._editingStartData = {
+                taskId: task ? task.id : null,
+                text: timeEntry.text
+            };
+
             var comboContainer = query(".task", dom)[0];
-            this._taskCombo.set("value", data.taskId ? data.code : "");
+            this._taskCombo.set("task", task);
             this._taskCombo.placeAt(comboContainer);
             this._taskCombo.startup();
 
@@ -152,7 +161,15 @@ function (
         },
 
         _onTaskComboChange: function() {
-
+            var task = this._taskCombo.get('task');
+            var taskId = task ? task.id : null;
+            if (taskId !== this._editingStartData.taskId) {
+                this._editingStartData.taskId = taskId;
+                new UpdateTimeEntryCommand({timeEntry: {
+                    id: this.editingId,
+                    taskId: taskId
+                }}).exec();
+            }
         }
 
     });

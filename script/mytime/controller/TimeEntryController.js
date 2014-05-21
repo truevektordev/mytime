@@ -40,11 +40,11 @@ define([
             if (!this._timeEntryStore) {
                 command.reject(new Error("Cannot update time entry before system is initialized."));
             } else {
-                var existingEntry = this._timeEntryStore.get(command.timeEntry.get('id'));
+                var existingEntry = this._timeEntryStore.get(command.timeEntry.id);
                 if (!existingEntry) {
                     var error = new Error("Cannot update time entry. It does not exist.");
                     error.timeEntry = command.timeEntry;
-                    error.timeEntryId = command.timeEntry.get('id');
+                    error.timeEntryId = command.timeEntry.id;
                     command.reject(error);
                     return;
                 }
