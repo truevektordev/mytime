@@ -6,6 +6,7 @@ define([
     'test/mytime/util/store/TransformingStoreView.spec',
     'test/mytime/util/whenAllPropertiesSet.spec',
     'test/mytime/widget/DailyTimeWidget/DailyTimeWidgetView.spec',
+    'test/mytime/widget/TaskPickerCombo.spec',
 
     'test/dojo/Stateful.spec',
     'test/dojo/store/Observable.spec'

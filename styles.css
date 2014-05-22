@@ -201,17 +201,25 @@ div.timelist {
         font-size: 80%;
 	}
 
+        .dijitMenuItem .task,
         .timelist .timeentry .task {
             display: block;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        .dijitMenuItem .task {
+            font-size: 80%;
+        }
+
+            .dijitMenuItem .code,
             .timelist .timeentry .code {
                 font-weight: bold;
                 padding-right: .2em;
             }
 
+            .dijitMenuItem .name,
             .timelist .timeentry .name {
                 font-style: italic;
             }

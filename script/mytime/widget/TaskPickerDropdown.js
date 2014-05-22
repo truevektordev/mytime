@@ -1,34 +1,69 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
-    "dijit/form/ComboBox"
+    "dijit/form/ComboBox",
+    "mytime/command/CreateTaskCommand"
 ],
 function (
     _, lang, declare,
-    ComboBox
+    ComboBox,
+    CreateTaskCommand
 ) {
     return declare([ComboBox], {
 
-        searchAttr: 'code',
+        searchAttr: "code",
+
+        labelType: "html",
+
+        constructor: function() {
+            this.baseClass += " taskpicker";
+        },
 
         _getTaskAttr: function() {
-            return this.get('item');
+            return this.get("item");
         },
 
         _setTaskAttr: function(task) {
-            this.set('item', task);
-        }
+            this.set("item", task);
+        },
 
-//        _getValueAttr: function() {
-//            var code = this.inherited(arguments);
-//            if (code) {
-//                return this.store.query({code: code})[0];
-//            } else {
-//                return null;
-//            }
-//        },
-//
-//        _setValueAttr: function(task) {
-//            this.inherited('_setValueAttr', [task.code]);
-//        }
+        _handleOnChange: function(newStringValue) {
+            this.inherited(arguments);
+            if (!this.item && newStringValue) {
+                var task = this._parseStringToTask(newStringValue);
+                if (task) {
+                    new CreateTaskCommand({task: task}).exec().then(lang.hitch(this, function(result) {
+                        this.set("task", result.task);
+                    }));
+                }
+            }
+        },
+
+        _isValidCode: function(code) {
+            return code && code.length > 1;
+        },
+
+        _parseStringToTask: function(string) {
+            string = string.trim();
+            if (string.length === 0) {
+                return null;
+            }
+
+            var task = {
+                code: string
+            };
+            var firstSpace = string.indexOf(' ');
+            if (firstSpace > -1) {
+                task.code = string.substring(0, firstSpace);
+                task.name = string.substring(firstSpace + 1).trim();
+                if (task.name.length < 1) {
+                    delete task.name;
+                }
+            }
+            return task;
+        },
+
+        labelFunc: function(item, store) {
+            return '<span class="task"><span class="code">' + item.code + '</span> <span class="name">' + item.name + '</span></span>';
+        }
     });
 });

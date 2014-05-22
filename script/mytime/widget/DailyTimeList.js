@@ -161,6 +161,7 @@ function (
         },
 
         _onTaskComboChange: function() {
+            console.log('dtChange');
             var task = this._taskCombo.get('task');
             var taskId = task ? task.id : null;
             if (taskId !== this._editingStartData.taskId) {
