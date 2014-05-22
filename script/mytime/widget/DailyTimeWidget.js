@@ -31,6 +31,8 @@ function (
         endHour: 19,
 
         timeEntryStore: null,
+
+        marginForResizeHandle: 0.05,
         
         _internalStore: null,
 
@@ -88,9 +90,9 @@ function (
         },
 
         _isHourAtStartOrEndOfEntry: function(timeEntry, hour) {
-            if (hour < timeEntry.startHour + 0.083) {
+            if (hour < timeEntry.startHour + this.marginForResizeHandle) {
                 return 'start';
-            } else if (hour > timeEntry.endHour - 0.083) {
+            } else if (hour > timeEntry.endHour - this.marginForResizeHandle) {
                 return 'end';
             } else {
                 return false;

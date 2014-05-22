@@ -64,6 +64,11 @@ function (
 
         labelFunc: function(item, store) {
             return '<span class="task"><span class="code">' + item.code + '</span> <span class="name">' + item.name + '</span></span>';
+        },
+
+        focusAndSelectAll: function() {
+            this.focus();
+            this.focusNode.select();
         }
     });
 });

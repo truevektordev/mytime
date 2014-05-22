@@ -2,7 +2,7 @@ define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
     "dijit/_WidgetBase",
-    "mytime/widget/TaskPickerDropdown",
+    "mytime/widget/TaskPickerCombo",
     "mytime/model/TimeEntry",
     "mytime/command/UpdateTimeEntryCommand",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
@@ -14,7 +14,7 @@ function (
     _, lang, declare,
     domConstruct, domAttr, on, query, Evented,
     _WidgetBase,
-    TaskPickerDropdown,
+    TaskPickerCombo,
     TimeEntry,
     UpdateTimeEntryCommand,
     Colors, whenAllPropertiesSet, TransformingStoreView,
@@ -83,7 +83,7 @@ function (
         },
 
         _setupTaskCombo: function() {
-            this._taskCombo = new TaskPickerDropdown({
+            this._taskCombo = new TaskPickerCombo({
                 store: this.taskStore
             });
             this.own(
@@ -156,6 +156,7 @@ function (
                 }
                 if (value) {
                     this._internalStore.refreshItem(value);
+                    this._taskCombo.focusAndSelectAll();
                 }
             }
         },
