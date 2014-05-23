@@ -1,5 +1,5 @@
 define([
-    "mytime/widget/TaskPickerDropdown"
+    "mytime/widget/TaskPickerCombo"
 ], function(
     TaskPickerCombo
 ) {

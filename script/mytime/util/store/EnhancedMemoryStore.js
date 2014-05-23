@@ -1,10 +1,19 @@
-define(["dojo/_base/declare", "lodash", "dojo/store/Memory", "dojo/store/Observable"],
-function (declare, _, MemoryStore, Observable) {
+define([
+    "dojo/_base/declare", "lodash",
+    "dojo/store/Memory", "dojo/store/Observable",
+    "./EnhancedMemoryStore.QueryEngine"
+], function (
+    declare, _,
+    MemoryStore, Observable,
+    QueryEngine
+) {
     /**
      * Adds a few useful methods to Memory store.
      * @type {*}
      */
     var EnhancedMemoryStore = declare([MemoryStore], {
+
+        queryEngine: QueryEngine,
 
         /**
          * Return number of items in the store
