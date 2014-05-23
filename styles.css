@@ -36,6 +36,15 @@ div.dayslist {
         border: 1px solid black;
         text-align: right;
     }
+        .dayslist td span {
+            font-size: 80%;
+            padding-left: 2px;
+        }
+
+        .dayslist td.zero-time {
+            color: #666;
+            font-size: 80%;
+        }
 
     .dayslist .total {
     }
