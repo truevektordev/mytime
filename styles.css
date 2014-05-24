@@ -59,11 +59,11 @@ div.dayslist {
             background-color: #eee;
         }
 
-    .dayslist .in-the-black {
+    div.dayslist td.in-the-black { /* Higher specificity to beat zero-time color */
         color: green;
     }
 
-    .dayslist .in-the-red {
+    div.dayslist td.in-the-red {
         color: red;
     }
 
@@ -208,6 +208,7 @@ div.timelist {
 		padding: .2em .4em;
 		margin: 0 0 .1em 0;
         font-size: 80%;
+        position: relative;
 	}
 
         .dijitMenuItem .task,
@@ -234,8 +235,10 @@ div.timelist {
             }
 
             .timelist .timeentry .jira-create-worklog {
-                float: right;
                 font-size: 80%;
+                position: absolute;
+                bottom: 3px;
+                right: 3px;
             }
 
 		.timelist .timeentry .note {

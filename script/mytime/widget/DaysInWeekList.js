@@ -47,8 +47,8 @@ function (declare,
         _dayRowNodes: null,
         _dayDateNodes: null,
         _dayHoursNodes: null,
-        _WeekTotalNode: null,
-        _WeekDiffNode: null,
+        _weekTotalNode: null,
+        _weekDiffNode: null,
 
         _setSelectedDateAttr: function(value) {
             this._set('selectedDate', value);
@@ -132,6 +132,7 @@ function (declare,
         _renderHours: function(timeEntries) {
             var total = 0;
             var dayTotal = {};
+            var countDaysWithEntries = 0;
             for (var i = 0; i < 7; i++) {
                 dayTotal[DateTimeUtil.convertDateObjectToDateString(this._getDateOfNthDay(i))] = 0;
             }
@@ -144,31 +145,31 @@ function (declare,
 
             for (var i = 0; i < 7; i++) {
                 var hours = dayTotal[DateTimeUtil.convertDateObjectToDateString(this._getDateOfNthDay(i))];
-                this._dayHoursNodes[i].innerHTML = this._formatHours(hours);
-                domClass.toggle(this._dayHoursNodes[i], "zero-time", hours === 0);
+                this._renderHour(this._dayHoursNodes[i], hours);
+                if (hours > 0) {
+                    countDaysWithEntries++;
+                }
             }
-            this._weekTotalNode.innerHTML = this._formatHours(total);
-            domClass.toggle(this._weekTotalNode, "zero-time", total === 0);
+            this._renderHour(this._weekTotalNode, total);
 
-            this._renderDifference(total);
+            var hoursNeeded = countDaysWithEntries * 8;
+            this._renderHour(this._weekDiffNode, total - hoursNeeded, true);
         },
 
-        _renderDifference: function(total) {
-            var daysIntoWeek = dojoDate.difference(this._firstDayOfWeek);
-            if (daysIntoWeek > 5) {
-                daysIntoWeek = 5;
-            }
-            var diff = 0;
-            if (daysIntoWeek >= 1) {
-                diff = total - (daysIntoWeek * 8);
+        _renderHour: function(cell, hours, includeSign) {
+            var text = this._formatHours(Math.abs(hours));
+            if (includeSign) {
+                if (hours < 0) {
+                    text = "- " + text;
+                } else if (hours > 0) {
+                    text = "+ " + text;
+                }
+                domClass.toggle(cell, "in-the-black", hours >= 0);
+                domClass.toggle(cell, "in-the-red", hours < 0);
             }
 
-            var diffString = this._formatHours(Math.abs(diff));
-            var diffSign = diff < 0 ? "- " : (diff > 0 ? "+ " : "")
-
-            this._weekDiffNode.innerHTML = diffSign + diffString;
-            domClass.toggle(this._weekDiffNode, "in-the-black", diff >= 0);
-            domClass.toggle(this._weekDiffNode, "in-the-red", diff < 0);
+            cell.innerHTML = text;
+            domClass.toggle(cell, "zero-time", hours === 0);
         },
 
         _formatHours: function(hour) {
