@@ -105,15 +105,18 @@ function (
                 timeEntryId: timeEntry.id,
                 taskId: "",
                 text: timeEntry.text || "",
+                duration: timeEntry.endHour - timeEntry.startHour,
                 code: "[&nbsp;&nbsp;&nbsp;]",
                 name: "No Task",
-                color: null
+                color: null,
+                jiraLoggable: false
             };
             if (task) {
                 data.taskId = task.id || "";
                 data.code = task.code || "&nbsp;";
                 data.name = task.name || "";
                 data.color = task.color || null;
+                data.jiraLoggable = task.code.indexOf('CAYENNE-') == 0;
             }
             if (timeEntry.editing) {
                 return this._renderEditingEntry(timeEntry, task, data);

@@ -6,4 +6,8 @@
         <span class="name"><%= name %></span>
     </span>
     <span class="note"><%= text %></span>
+    <% if (jiraLoggable) { %>
+    <a class="jira-create-worklog" target="_blank"
+       href="https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=<%= code %>&timeLogged=<%= duration %>h&comment=<%= text %>">JIRA</a>
+    <% } %>
 </div>

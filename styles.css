@@ -233,6 +233,11 @@ div.timelist {
                 font-style: italic;
             }
 
+            .timelist .timeentry .jira-create-worklog {
+                float: right;
+                font-size: 80%;
+            }
+
 		.timelist .timeentry .note {
 		}
 		

@@ -3,4 +3,8 @@
      Colors.light(color) %>, <%= Colors.shadow(color) %>)">
     <span class="task"></span>
     <span class="note"><textarea data-dojo-type="dijit/form/Textarea"><%= text %></textarea></span>
+    <% if (jiraLoggable) { %>
+    <a class="jira-create-worklog" target="_blank"
+       href="https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=<%= code %>&timeLogged=<%= duration %>h&comment=<%= text %>">JIRA</a>
+    <% } %>
 </div>
