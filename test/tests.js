@@ -1,5 +1,6 @@
 define([
     'test/mytime/model/_ModelBase.spec',
+    'test/mytime/persistence/LocalStorage.spec',
     'test/mytime/util/DateTimeUtil.spec',
     'test/mytime/util/store/EnhancedMemoryStore.spec',
     'test/mytime/util/store/delegateObserve.spec',
