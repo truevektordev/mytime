@@ -8,6 +8,9 @@ define([
     IdGenerator
 ) {
 
+    /**
+     * Base class for a standard CRUD controller.
+     */
     return declare([Destroyable], {
 
         createCommand: null,
@@ -36,11 +39,27 @@ define([
             } else {
                 var entry = new this.objectTypeConstructor(command[this.commandObjectProperty]);
                 entry.set("id", IdGenerator.nextIdForType(this.objectTypeName));
+
+                this._beforeCreate(command, entry);
+                if (command.isFulfilled()) {
+                    return;
+                }
+
                 console.log("PUT NEW " + JSON.stringify(entry));
                 this.store.put(entry);
                 command.resolve(this._getCommandResult(entry));
             }
         },
+
+        /**
+         * Override this to extend behavior. Called before creating a new object. To prevent the default behavior,
+         * resolve or reject the command.
+         *
+         * @param {Object} command
+         * @param {Object} entry new object about to be created. an instance of objectTypeConstructor
+         * @private
+         */
+        _beforeCreate: function(command, entry) {},
 
         handleUpdate: function(command) {
             if (!this.store) {
@@ -53,12 +72,28 @@ define([
                     command.reject(this._getCommandError("Cannot update {}. It does not exist."));
                     return;
                 }
+
+                this._beforeUpdate(command, existingEntry);
+                if (command.isFulfilled()) {
+                    return;
+                }
+
                 existingEntry.updateFrom(updateObject);
                 console.log("PUT " + JSON.stringify(existingEntry));
                 this.store.put(existingEntry);
                 command.resolve(this._getCommandResult(existingEntry));
             }
         },
+
+        /**
+         * Override this to extend behavior. Called before updating an object. To prevent the default behavior, resolve
+         * or reject the command.
+         *
+         * @param command
+         * @param existingEntry the entry from the store before updates are applied
+         * @private
+         */
+        _beforeUpdate: function(command, existingEntry) {},
 
         handleDelete: function(command) {
             if (!this.store) {
@@ -70,11 +105,27 @@ define([
                     command.reject(this._getCommandError("Cannot delete {}. It does not exist."));
                     return;
                 }
+
+                this._beforeDelete(command, existingEntry);
+                if (command.isFulfilled()) {
+                    return;
+                }
+
                 console.log("REMOVE " + JSON.stringify(existingEntry));
                 this.store.remove(id);
                 command.resolve(this._getCommandResult(existingEntry, id));
             }
         },
+
+        /**
+         * Override this to extend behavior. Called before deleting an object. To prevent the default behavior, resolve
+         * or reject the command.
+         *
+         * @param command
+         * @param existingEntry the entry from the store that will be deleted.
+         * @private
+         */
+        _beforeDelete: function(command, existingEntry) {},
 
         _getCommandResult: function(object, id) {
             var result = {};
