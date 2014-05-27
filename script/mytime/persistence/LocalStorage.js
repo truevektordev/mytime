@@ -3,15 +3,54 @@ define([
     "mytime/model/TimeEntry"
 ],
 function (exports, _, lang) {
+    /**
+     * Methods for interfacting with HTML5 Local Storage
+     */
     lang.mixin(exports, {
 
-        persistStoreData: function(key, data) {
-            localStorage.setItem(key, JSON.stringify(data));
+        persistObject: function(key, object) {
+            localStorage.setItem(key, JSON.stringify(object));
         },
 
+        /**
+         *
+         * @param {string} key
+         * @param {function} [constructor] if specified, the retrieved object will be passed into the constructor to
+         *                   return an object of that type (optional - if not specified the raw persisted data is
+         *                   returned.
+         * @returns {*}
+         */
+        retrieveObject: function(key, constructor) {
+            var object = localStorage.getItem(key);
+            if (!object) {
+                return null;
+            }
+            object = JSON.parse(object);
+            if (constructor) {
+                object = new constructor(object);
+            }
+            return object;
+        },
+
+        /**
+         * Persist an array of objects
+         * @param {string} key
+         * @param {Array} data array of objects to persist
+         */
+        persistStoreData: function(key, data) {
+            this.persistObject(key, data);
+        },
+
+        /**
+         * Retrieve an array of objects
+         * @param {string} key
+         * @param {function} [constructor] if specified, each retrieved object in the array will be passed into this
+         *                   constructor to return an object to be used (optional - if not specified the raw persisted
+         *                   data is returned as is.
+         * @returns {Array}
+         */
         retrieveStoreData: function(key, constructor) {
-            var data = localStorage.getItem(key);
-            data = JSON.parse(data || "[]");
+            var data = this.retrieveObject(key) || [];
             if (constructor) {
                 for (var i = 0; i < data.length; i++) {
                     data[i] = new constructor(data[i]);
@@ -20,10 +59,22 @@ function (exports, _, lang) {
             return data;
         },
 
+        /**
+         * Persist a synchronous store, such as a Memory store. The store is not modified.
+         * @param {string} key
+         * @param {dojo/Store} store
+         */
         persistStore: function(key, store) {
             this.persistStoreData(key, store.query());
         },
 
+        /**
+         * Given an store, add the array data from storage into that store.
+         * @param {string} key
+         * @param {dojo/Store} store
+         * @param {function} [constructor] (see retrieveStoreData())
+         * @returns {*}
+         */
         loadStore: function(key, store, constructor) {
             var data = this.retrieveStoreData(key, constructor);
             _.forEach(data, function(item) {
