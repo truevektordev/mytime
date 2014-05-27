@@ -17,20 +17,20 @@ define([
 
     return declare(null, {
 
-        _taskStore: null,
+        store: null,
 
         colorGenerator: null,
 
         constructor: function() {
             this.colorGenerator = new ColorGenerator();
-            sync(modelRegistry, 'taskStore', this, '_taskStore', {bindDirection: sync.from});
+            sync(modelRegistry, 'taskStore', this, 'store', {bindDirection: sync.from});
             CreateTaskCommand.subscribe(lang.hitch(this, 'handleCreateTask'));
             UpdateTaskCommand.subscribe(lang.hitch(this, 'handleUpdateTask'));
             DeleteTaskCommand.subscribe(lang.hitch(this, 'handleDeleteTask'));
         },
 
         handleCreateTask: function(command) {
-            if (!this._taskStore) {
+            if (!this.store) {
                 command.reject(new Error("Cannot add task before system is initialized."));
             } else {
                 var task = new Task(command.task);
@@ -39,16 +39,16 @@ define([
                     task.set('color', this.colorGenerator.next());
                 }
                 console.log('PUT NEW ' + JSON.stringify(task));
-                this._taskStore.put(task);
+                this.store.put(task);
                 command.resolve({taskId: task.get('id'), task: task});
             }
         },
 
         handleUpdateTask: function(command) {
-            if (!this._taskStore) {
+            if (!this.store) {
                 command.reject(new Error("Cannot update task before system is initialized."));
             } else {
-                var existingEntry = this._taskStore.get(command.task.get('id'));
+                var existingEntry = this.store.get(command.task.get('id'));
                 if (!existingEntry) {
                     var error = new Error("Cannot update task. It does not exist.");
                     error.task = command.task;
@@ -58,16 +58,16 @@ define([
                 }
                 existingEntry.updateFrom(command.task);
                 console.log('PUT ' + JSON.stringify(existingEntry));
-                this._taskStore.put(existingEntry);
+                this.store.put(existingEntry);
                 command.resolve({taskId: existingEntry.get('id'), task: existingEntry});
             }
         },
 
         handleDeleteTask: function(command) {
-            if (!this._taskStore) {
+            if (!this.store) {
                 command.reject(new Error("Cannot delete task before system is initialized."));
             } else {
-                var existingEntry = this._taskStore.get(command.taskId);
+                var existingEntry = this.store.get(command.taskId);
                 if (!existingEntry) {
                     var error = new Error("Cannot delete task. It does not exist.");
                     error.taskId = command.taskId;
@@ -75,7 +75,7 @@ define([
                     return;
                 }
                 console.log('REMOVE ' + JSON.stringify(existingEntry));
-                this._taskStore.remove(command.taskId);
+                this.store.remove(command.taskId);
                 command.resolve({taskId: command.taskId, task: existingEntry});
             }
         }

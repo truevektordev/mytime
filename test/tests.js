@@ -1,4 +1,5 @@
 define([
+    'test/mytime/controller/TimeEntryController.spec',
     'test/mytime/model/_ModelBase.spec',
     'test/mytime/persistence/LocalStorage.spec',
     'test/mytime/util/DateTimeUtil.spec',
