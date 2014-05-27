@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2014 David Wolverton
+ * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
+ */
 describe("mytime/util/store/SingleDayFilteringTimeEntryStore", function() {
 
     var SingleDayFilteringTimeEntryStore = demand("mytime/util/store/SingleDayFilteringTimeEntryStore");

@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2014 David Wolverton
+ * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
+ */
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     'dijit/_WidgetBase', 'dijit/_TemplatedMixin', 'dijit/_WidgetsInTemplateMixin',

@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2014 David Wolverton
+ * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
+ */
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",

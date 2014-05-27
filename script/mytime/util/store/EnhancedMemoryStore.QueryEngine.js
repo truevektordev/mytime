@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2014 David Wolverton
+ * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
+ */
 define(["lodash", "dojo/store/util/SimpleQueryEngine"],
 function (_, SimpleQueryEngine) {
    return function(query, options) {

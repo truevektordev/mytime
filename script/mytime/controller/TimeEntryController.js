@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2014 David Wolverton
+ * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
+ */
 define([
     "dojo/_base/declare",
     "mytime/model/modelRegistry", "mytime/model/TimeEntry",

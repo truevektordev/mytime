@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2014 David Wolverton
+ * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
+ */
 define([
     'test/mytime/controller/TimeEntryController.spec',
     'test/mytime/model/_ModelBase.spec',
