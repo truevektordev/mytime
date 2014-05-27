@@ -21,9 +21,9 @@ function (_, declare, lang, EnhancedMemoryStore, _StatefulSettersMixin, setIfDif
 
         date: null,
 
-        startHour: 7,
+        startHour: 0,
 
-        endHour: 19,
+        endHour: 24,
 
         sourceStore: null,
 
