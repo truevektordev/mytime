@@ -50,13 +50,18 @@ function (declare,
         _weekTotalNode: null,
         _weekDiffNode: null,
 
+        _queryObserveHandle: null,
+
         _setSelectedDateAttr: function(value) {
             this._set('selectedDate', value);
             var date = DateTimeUtil.convertDateStringToDateObject(value);
             this._selectedDayOfWeek = date.getDay();
+            var oldFirstDayOfWeek = this._firstDayOfWeek;
             this._firstDayOfWeek = dojoDate.add(date, 'day', -this._selectedDayOfWeek);
             this._fillIn();
-            this._updateHours();
+            if (!oldFirstDayOfWeek || this._firstDayOfWeek.getTime() !== oldFirstDayOfWeek.getTime()) {
+                this._handleWeekChange();
+            }
         },
 
         buildRendering: function() {
@@ -72,7 +77,7 @@ function (declare,
                 this._dayHoursNodes[i] = row.cells[2];
             }
             this._fillIn();
-            this._updateHours();
+            this._handleWeekChange();
         },
 
         _fillIn: function() {
@@ -111,7 +116,7 @@ function (declare,
                         }
                     }
                 }),
-                this.watch('timeEntryStore', lang.hitch(this, '_updateHours'))
+                this.watch('timeEntryStore', lang.hitch(this, '_handleWeekChange'))
             )
         },
 
@@ -119,14 +124,27 @@ function (declare,
             return dojoDate.add(this._firstDayOfWeek, 'day', n);
         },
 
-        _updateHours: function() {
+        _handleWeekChange: function() {
             if (!this.timeEntryStore || !this._headerNode || !this._firstDayOfWeek) {
                 return; // too early to render
             }
-            when(this.timeEntryStore.query({
+            if (this._queryObserveHandle) {
+                this._queryObserveHandle.remove();
+            }
+            var queryResult = this._queryTimeEntriesForWeek();
+            queryResult.observe(lang.hitch(this, '_requeryAndRefreshHours'), true);
+            when(queryResult, lang.hitch(this, '_renderHours'));
+        },
+
+        _queryTimeEntriesForWeek: function() {
+            return this.timeEntryStore.query({
                 "date>=": DateTimeUtil.convertDateObjectToDateString(this._firstDayOfWeek),
                 "date<=": DateTimeUtil.convertDateObjectToDateString(this._getDateOfNthDay(6))
-            }), lang.hitch(this, '_renderHours'));
+            });
+        },
+
+        _requeryAndRefreshHours: function() {
+            when(this._queryTimeEntriesForWeek(), lang.hitch(this, '_renderHours'));
         },
 
         _renderHours: function(timeEntries) {
