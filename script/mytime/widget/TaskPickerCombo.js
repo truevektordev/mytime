@@ -1,12 +1,14 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dijit/form/ComboBox",
-    "mytime/command/CreateTaskCommand"
+    "mytime/command/CreateTaskCommand",
+    "mytime/util/Colors"
 ],
 function (
     _, lang, declare,
     ComboBox,
-    CreateTaskCommand
+    CreateTaskCommand,
+    Colors
 ) {
     return declare([ComboBox], {
 
@@ -63,7 +65,7 @@ function (
         },
 
         labelFunc: function(item, store) {
-            return '<span class="task"><span class="code">' + item.code + '</span> <span class="name">' + item.name + '</span></span>';
+            return '<span class="task" style="color: ' + Colors.dark(item.color) + '"><span class="code">' + item.code + '</span> <span class="name">' + (item.name || "") + '</span></span>';
         },
 
         focusAndSelectAll: function() {

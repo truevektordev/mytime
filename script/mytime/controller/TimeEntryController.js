@@ -1,12 +1,12 @@
 define([
-    "dojo/_base/lang", "dojo/_base/declare",
+    "dojo/_base/declare",
     "mytime/model/modelRegistry", "mytime/model/TimeEntry",
     "mytime/command/CreateTimeEntryCommand", "mytime/command/UpdateTimeEntryCommand",
     "mytime/command/DeleteTimeEntryCommand",
     "mytime/controller/_CrudController",
     "mytime/util/syncFrom"
 ], function(
-    lang, declare,
+    declare,
     modelRegistry, TimeEntry,
     CreateTimeEntryCommand, UpdateTimeEntryCommand, DeleteTimeEntryCommand,
     _CrudController,

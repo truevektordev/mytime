@@ -1,14 +1,12 @@
 define([
-    "dojo/_base/lang", "dojo/_base/declare",
-    "dojox/mvc/sync",
+    "dojo/_base/declare",
     "mytime/model/modelRegistry", "mytime/model/Task",
     "mytime/command/CreateTaskCommand", "mytime/command/UpdateTaskCommand",
     "mytime/command/DeleteTaskCommand",
     "mytime/controller/_CrudController",
     "mytime/util/syncFrom", "mytime/util/ColorGenerator"
 ], function(
-    lang, declare,
-    sync,
+    declare,
     modelRegistry, Task,
     CreateTaskCommand, UpdateTaskCommand, DeleteTaskCommand,
     _CrudController,
