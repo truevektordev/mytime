@@ -17,7 +17,7 @@ define([
     modelRegistry.set("taskStore", EnhancedMemoryStore.createObservable());
     
     LocalStorage.loadStore("timeEntryStore", modelRegistry.get("timeEntryStore"), TimeEntry);
-    LocalStorage.loadStore("taskStore", modelRegistry.get("taskStore"), TimeEntry);
+    LocalStorage.loadStore("taskStore", modelRegistry.get("taskStore"), Task);
 
     new TimeEntryController();
     new TaskController();

@@ -1,11 +1,11 @@
 define([
-    "dojo/_base/lang", "dojo/_base/declare",
+    "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dijit/Destroyable",
-    "mytime/persistence/IdGenerator"
+    "mytime/persistence/IdGenerator", "mytime/persistence/LocalStorage"
 ], function(
-    lang, declare,
+    _, lang, declare,
     Destroyable,
-    IdGenerator
+    IdGenerator, LocalStorage
 ) {
 
     /**
@@ -21,6 +21,7 @@ define([
         objectTypeConstructor: null,
         objectTypeName: "",
         objectTypeStringForMessages: "",
+        storageKey: "",
 
         commandObjectProperty: "",
         commandIdProperty: "",
@@ -31,6 +32,11 @@ define([
                 this.updateCommand.subscribe(lang.hitch(this, "handleUpdate")),
                 this.deleteCommand.subscribe(lang.hitch(this, "handleDelete"))
             );
+            this._persistStore = _.debounce(function() {
+                if (this.storageKey) {
+                    LocalStorage.persistStore(this.storageKey, this.store)
+                }
+            }, 100);
         },
 
         handleCreate: function(command) {
@@ -48,6 +54,7 @@ define([
                 console.log("PUT NEW " + JSON.stringify(entry));
                 this.store.put(entry);
                 command.resolve(this._getCommandResult(entry));
+                this._persistStore();
             }
         },
 
@@ -82,6 +89,7 @@ define([
                 console.log("PUT " + JSON.stringify(existingEntry));
                 this.store.put(existingEntry);
                 command.resolve(this._getCommandResult(existingEntry));
+                this._persistStore();
             }
         },
 
@@ -114,6 +122,7 @@ define([
                 console.log("REMOVE " + JSON.stringify(existingEntry));
                 this.store.remove(id);
                 command.resolve(this._getCommandResult(existingEntry, id));
+                this._persistStore();
             }
         },
 

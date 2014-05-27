@@ -25,6 +25,7 @@ define([
         objectTypeConstructor: Task,
         objectTypeName: "Task",
         objectTypeStringForMessages: "task",
+        storageKey: "taskStore",
 
         colorGenerator: null,
 

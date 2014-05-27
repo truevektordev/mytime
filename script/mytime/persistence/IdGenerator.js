@@ -1,14 +1,16 @@
-define([],
-function () {
+define(["./LocalStorage"],
+function (LocalStorage) {
 
-    var nextIdByType = {
-        'TimeEntry': 1,
-        'Task': 1
+    var lastIdByType = {
+        'TimeEntry': LocalStorage.retrieveObject("lastTimeEntryId") || 0,
+        'Task': LocalStorage.retrieveObject("lastTaskId") || 0
     };
 
     return {
         nextIdForType: function(type) {
-            return String((nextIdByType[type]++));
+            var id = ++lastIdByType[type];
+            LocalStorage.persistObject("last" + type + "Id", id);
+            return String((id));
         }
     }
 });

@@ -25,6 +25,7 @@ define([
         objectTypeConstructor: TimeEntry,
         objectTypeName: "TimeEntry",
         objectTypeStringForMessages: "time entry",
+        storageKey: "timeEntryStore",
 
         constructor: function() {
             this.own( syncFrom(modelRegistry, "timeEntryStore", this, "store") );
