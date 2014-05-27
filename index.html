@@ -5,8 +5,9 @@
     <title>Time Logger</title>
     <link rel="stylesheet" href="bower_components/dijit/themes/nihilo/nihilo.css">
     <link rel="stylesheet" href="styles.css">
-    <script type="text/javascript" src="bower_components/dojo/dojo.js" data-dojo-config="
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/dojo/1.8.4/dojo/dojo.js" data-dojo-config="
         async: true,
+        baseUrl: location.pathname.replace(/\/[^/]+$/, '') + '/bower_components/dojo',
         deps: ['./script/bootstrap']
     "></script>
 </head>

@@ -6,7 +6,7 @@
 require({
     packages: [
         { name: 'mytime', location: '../../script/mytime' },
-        { name: 'lodash', location: '../lodash/dist', main: 'lodash.min' }
+        { name: 'lodash', location: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1', main: 'lodash.min' }
     ]
 }, ['mytime/debug-helper', 'mytime/main', 'dojo/parser', 'dojo/ready'], function(_1, _2, parser, ready){
     ready(function(){
