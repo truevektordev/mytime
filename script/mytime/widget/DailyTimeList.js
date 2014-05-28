@@ -121,7 +121,7 @@ function (
                 data.code = task.code || "&nbsp;";
                 data.name = task.name || "";
                 data.color = task.color || null;
-                data.jiraLoggable = task.code.indexOf('CAYENNE-') == 0;
+                data.jiraLoggable = task.code.indexOf('CAYENNE-') == 0 || task.code.indexOf('PSP-') == 0;
             }
             if (timeEntry.editing) {
                 return this._renderEditingEntry(timeEntry, task, data);
