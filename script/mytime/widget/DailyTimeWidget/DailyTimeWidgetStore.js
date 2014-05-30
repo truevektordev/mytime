@@ -30,6 +30,7 @@ define([
             this.inherited(arguments);
             this.watch("startHour", lang.hitch(this, "refresh"));
             this.watch("endHour", lang.hitch(this, "refresh"));
+            this.watch("taskStore", lang.hitch(this, "refresh"));
         },
 
         transform: function(timeEntry) {
@@ -39,7 +40,7 @@ define([
             timeEntry = new TimeEntry(timeEntry);
             timeEntry.startHour = this._constrainStartHour(timeEntry.startHour);
             timeEntry.endHour = this._constrainEndHour(timeEntry.endHour);
-            if (timeEntry.taskId) {
+            if (timeEntry.taskId && this.taskStore) {
                 var task = this.taskStore.get(timeEntry.taskId);
                 if (task) {
                     timeEntry.color = task.color;

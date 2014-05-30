@@ -9,6 +9,7 @@ define([
     'mytime/util/DateTimeUtil', 'mytime/model/modelRegistry',
     "mytime/command/CreateTimeEntryCommand", 'mytime/command/UpdateTimeEntryCommand',
     'mytime/command/DeleteTimeEntryCommand',
+    'mytime/util/syncFrom',
     'dojox/mvc/sync',
     'dojo/text!./TimeEntryPane.html',
     /* In template: */
@@ -19,6 +20,7 @@ define([
     _TemplatedMixin, _WidgetsInTemplateMixin,
     DateTimeUtil, modelRegistry,
     CreateTimeEntryCommand, UpdateTimeEntryCommand, DeleteTimeEntryCommand,
+    syncFrom,
     sync,
     template
 ) {
@@ -35,10 +37,11 @@ define([
             this.own(sync(this, 'currentDate', this._daysInWeekList, 'selectedDate'));
             this.own(sync(this, 'currentDate', this._dailyTimeWidget, 'date'));
             this.own(sync(this, 'currentDate', this._dailyTimeList, 'date'));
-            this.own(sync(modelRegistry, 'timeEntryStore', this._daysInWeekList, 'timeEntryStore', {bindDirection: sync.from}));
-            this.own(sync(modelRegistry, 'timeEntryStore', this._dailyTimeWidget, 'timeEntryStore', {bindDirection: sync.from}));
-            this.own(sync(modelRegistry, 'timeEntryStore', this._dailyTimeList, 'timeEntryStore', {bindDirection: sync.from}));
-            this.own(sync(modelRegistry, 'taskStore', this._dailyTimeList, 'taskStore', {bindDirection: sync.from}));
+            this.own(syncFrom(modelRegistry, 'timeEntryStore', this._daysInWeekList));
+            this.own(syncFrom(modelRegistry, 'timeEntryStore', this._dailyTimeWidget));
+            this.own(syncFrom(modelRegistry, 'taskStore', this._dailyTimeWidget));
+            this.own(syncFrom(modelRegistry, 'timeEntryStore', this._dailyTimeList));
+            this.own(syncFrom(modelRegistry, 'taskStore', this._dailyTimeList));
 
             this.own(this._dailyTimeWidget.on('createTimeEntry', lang.hitch(this, '_createTimeEntry')));
             this.own(this._dailyTimeWidget.on('updateTimeEntry', lang.hitch(this, '_updateTimeEntry')));
