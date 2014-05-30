@@ -244,6 +244,7 @@ function (declare,
                 }
                 i++;
             }
+            this._setTextOnTimeBars(timeBars, timeEntry.code);
         },
 
         _buildTimeBarsForTimeEntry: function(timeEntry) {
@@ -253,6 +254,7 @@ function (declare,
                 timeBars.push(timebar);
                 this._placeTimeBar(timebar, slot.hour);
             }, this);
+            this._setTextOnTimeBars(timeBars, timeEntry.code);
         },
 
         _placeTimeBar: function(timebar, hour) {
@@ -289,6 +291,28 @@ function (declare,
             domStyle.set(timeBar, "right", (100 - slot.endPercentage) + "%");
             domClass.toggle(timeBar, "start", slot.isStart);
             domClass.toggle(timeBar, "end", slot.isEnd);
+        },
+
+        _setTextOnTimeBars: function(timeBars, text) {
+            if (!timeBars || timeBars.length == 0) {
+                return;
+            }
+            text = text || "";
+            var middle;
+            if (timeBars.length % 2 == 0) {
+                // even
+                middle = timeBars.length / 2 - 1;
+                if (timeBars[middle + 1].clientWidth > timeBars[middle].clientWidth + 3) {
+                    middle = middle + 1;
+                }
+            } else {
+                // odd
+                middle = (timeBars.length - 1) / 2;
+            }
+
+            _.forEach(timeBars, function(bar, i) {
+                bar.innerText = (middle === i) ? text : "";
+            });
         },
 
         _timeEntryRemoved: function(timeEntry) {
