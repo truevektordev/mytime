@@ -3,7 +3,13 @@
  * Copyright 2014 David Wolverton
  * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
  */
-define(["dojo/_base/declare"], function (declare) {
+define(["dojo/_base/declare", "mytime/persistence/LocalStorage"], function (declare, LocalStorage) {
+
+    var lastColor = LocalStorage.retrieveObject("lastColor");
+    if (!_.isNumber(lastColor)) {
+        lastColor = -1;
+    }
+
     return declare(null, {
         colors: [
             '0,100',
@@ -20,10 +26,11 @@ define(["dojo/_base/declare"], function (declare) {
             '330,100'
         ],
 
-        _index: -1,
+        _index: lastColor,
 
         next: function() {
             this._index = (this._index + 1) % this.colors.length;
+            LocalStorage.persistObject("lastColor", this._index);
             return this.colors[this._index];
         }
     });

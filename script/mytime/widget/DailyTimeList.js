@@ -11,7 +11,7 @@ define([
     "mytime/model/TimeEntry",
     "mytime/command/UpdateTimeEntryCommand",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
-    "mytime/util/store/StoreDrivenDom",
+    "mytime/util/store/StoreDrivenDom", "mytime/util/store/delegateObserve",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
 ],
@@ -23,7 +23,7 @@ function (
     TimeEntry,
     UpdateTimeEntryCommand,
     Colors, whenAllPropertiesSet, TransformingStoreView,
-    StoreDrivenDom,
+    StoreDrivenDom, delegateObserve,
     template, editTemplate) {
 
     /**
@@ -83,7 +83,8 @@ function (
 
             this.own(
                 this.watch("date", lang.hitch(this, "_dateChanged")),
-                this.watch("editingId", lang.hitch(this, "_editingIdChanged"))
+                this.watch("editingId", lang.hitch(this, "_editingIdChanged")),
+                this._internalStore.observe(delegateObserve("_onTimeEntryAdded", null, null, this))
             );
         },
 
@@ -170,7 +171,6 @@ function (
         },
 
         _onTaskComboChange: function() {
-            console.log('dtChange');
             var task = this._taskCombo.get('task');
             var taskId = task ? task.id : null;
             if (taskId !== this._editingStartData.taskId) {
@@ -180,6 +180,12 @@ function (
                     taskId: taskId
                 }}).exec();
             }
+        },
+
+        _onTimeEntryAdded: function(timeEntry) {
+            _.defer(lang.hitch(this, function() {
+                this.set("editingId", timeEntry.id);
+            }));
         }
 
     });
