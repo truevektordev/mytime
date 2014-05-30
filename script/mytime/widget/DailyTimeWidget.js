@@ -8,15 +8,16 @@ define([
     "dojo/_base/lang", "dojo/_base/declare", "dojo/Evented", "dojo/store/Observable",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
-    "mytime/util/DateTimeUtil", "mytime/util/store/SingleDayFilteringTimeEntryStore", "mytime/util/syncFrom",
-    "mytime/widget/DailyTimeWidget/DailyTimeWidgetView"
+    "mytime/util/DateTimeUtil", "mytime/util/syncFrom",
+    "mytime/widget/DailyTimeWidget/DailyTimeWidgetView", "mytime/widget/DailyTimeWidget/DailyTimeWidgetStore"
 ],
 function (
     _, lang, declare, Evented, Observable,
     _WidgetBase,
     TimeEntry,
-    DateTimeUtil, SingleDayFilteringTimeEntryStore, syncFrom,
-    View) {
+    DateTimeUtil, syncFrom,
+    DailyTimeWidgetView, DailyTimeWidgetStore
+) {
 
     /**
      * inputs:
@@ -36,6 +37,7 @@ function (
         endHour: 19,
 
         timeEntryStore: null,
+        taskStore: null,
 
         marginForResizeHandle: 0.05,
         
@@ -47,14 +49,15 @@ function (
         _timeEntryStoreObserverHandle: null,
 
         constructor: function() {
-            this._internalStore = new Observable(new SingleDayFilteringTimeEntryStore());
+            this._internalStore = new DailyTimeWidgetStore().getObservable();
             this.own(
                 syncFrom(this, 'date', this._internalStore),
                 syncFrom(this, 'startHour', this._internalStore),
                 syncFrom(this, 'endHour', this._internalStore),
+                syncFrom(this, 'taskStore', this._internalStore),
                 syncFrom(this, 'timeEntryStore', this._internalStore, 'sourceStore')
             );
-            this._view = new View({
+            this._view = new DailyTimeWidgetView({
                 model: this
             });
         },

@@ -92,7 +92,7 @@ define([
             this.watch("sourceStore", _refreshWatcher);
             this.watch("sourceQuery", _refreshWatcher);
             this.watch("transform", _refreshWatcher);
-            this._refreshIfReady();
+            this.refresh();
         },
 
         /**
@@ -102,7 +102,7 @@ define([
          * @private
          */
         _bindMethodsToPointerToThis: function() {
-            _.forEach(["_refreshWatcher", "_refreshIfReady", "refresh", "refreshItem",
+            _.forEach(["_refreshWatcher", "refresh", "refreshItem",
                     "_onInsert", "_onUpdate", "_onRemove"],
                 function(fnName) {
                     var originalFn = this[fnName];
@@ -114,17 +114,15 @@ define([
 
         _refreshWatcher: function(property, oldValue, value) {
             if (value !== oldValue) {
-                this._refreshIfReady();
-            }
-        },
-
-        _refreshIfReady: function() {
-            if (this.sourceStore && this.transform) {
                 this.refresh();
             }
         },
 
         refresh: function() {
+            if (!this.sourceStore || !this.transform) {
+                return;
+            }
+
             if (this._observeHandle) {
                 this._observeHandle.remove();
                 this._observeHandle = null;

@@ -4,25 +4,27 @@
  * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
  */
 define([
-    "mytime/util/store/SingleDayFilteringTimeEntryStore",
+    "mytime/widget/DailyTimeWidget/DailyTimeWidgetStore",
     "mytime/model/TimeEntry",
     "dojo/store/Memory", "dojo/store/Observable"
 ], function(
-    SingleDayFilteringTimeEntryStore,
+    DailyTimeWidgetStore,
     TimeEntry,
     MemoryStore, Observable
 ) {
-    describe("mytime/util/store/SingleDayFilteringTimeEntryStore", function() {
+    describe("mytime/widget/DailyTimeWidget/DailyTimeWidgetStore", function() {
 
         var store, sourceStore;
+        var taskStore = new MemoryStore();
 
         function initSourceStore() {
             sourceStore = new Observable(new MemoryStore());
         }
 
         function initStore(widgetParams) {
-            widgetParams = widgetParams || {date: "2010-10-10", startHour: 10, endHour: 15, sourceStore: sourceStore};
-            store = new SingleDayFilteringTimeEntryStore(widgetParams);
+            widgetParams = widgetParams || {date: "2010-10-10", startHour: 10, endHour: 15, sourceStore: sourceStore,
+                taskStore: taskStore};
+            store = new DailyTimeWidgetStore(widgetParams);
         }
 
         function setupStandardStore() {
@@ -72,7 +74,7 @@ define([
                     id: arg[0],
                     startHour: arg[1],
                     endHour: arg[2],
-                    taskId: arg[3]
+                    taskId: arg[3] || null
                 };
 
                 var actual = store.get(arg.id);
@@ -238,19 +240,6 @@ define([
             addToSource("a", "2010-10-10", 10, 12);
 
             store.set("date", null);
-            store.set("timeEntryStore", null);
-
-            addToSource("b", "2010-10-10", 12, 14);
-
-            expectData();
-        });
-
-        it("can unset sourceStore", function() {
-            setupStandardStore();
-            addToSource("a", "2010-10-10", 10, 12);
-
-            store.set("sourceStore", null);
-            store.set("date", null);
 
             addToSource("b", "2010-10-10", 12, 14);
 
@@ -268,6 +257,41 @@ define([
                        ["c", 14, 16, "blue"]);
         });
 
-        // TODO test set startHour, endHour
+        it("updates with changes to startHour", function() {
+            initSourceStore();
+            addToSource("a", "2010-10-10", 9, 12);
+            addToSource("b", "2010-10-10", 12.5, 15);
+            addToSource("c", "2010-10-10", 15, 17);
+            initStore();
+
+            store.set("startHour", 13);
+            expectData(["b", 13, 15],
+                       ["c", 15, 16]);
+        });
+
+        it("updates with changes to endHour", function() {
+            initSourceStore();
+            addToSource("a", "2010-10-10", 9, 12);
+            addToSource("b", "2010-10-10", 12.5, 15);
+            addToSource("c", "2010-10-10", 15, 17);
+            initStore();
+
+            store.set("endHour", 12);
+            expectData(["a", 10, 12],
+                       ["b", 12.5, 13]);
+        });
+
+        it("gets code and color from task", function() {
+            initSourceStore();
+            addToSource("a", "2010-10-10", 12, 15, "task-2");
+            taskStore.add({id: "task-1", code: "CODE1", color: "red"});
+            taskStore.add({id: "task-2", code: "CODE2", color: "yellow"});
+            initStore();
+
+            var result = store.get("a");
+            expect(result).to.have.property("taskId", "task-2");
+            expect(result).to.have.property("code", "CODE2");
+            expect(result).to.have.property("color", "yellow");
+        });
     });
 });
