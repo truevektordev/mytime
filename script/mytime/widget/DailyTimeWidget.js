@@ -5,14 +5,14 @@
  */
 define([
     "lodash",
-    "dojo/_base/lang", "dojo/_base/declare", "dojo/Evented", "dojo/store/Observable",
+    "dojo/_base/lang", "dojo/_base/declare", "dojo/Evented",
     "dijit/_WidgetBase",
     "mytime/model/TimeEntry",
     "mytime/util/DateTimeUtil", "mytime/util/syncFrom",
     "mytime/widget/DailyTimeWidget/DailyTimeWidgetView", "mytime/widget/DailyTimeWidget/DailyTimeWidgetStore"
 ],
 function (
-    _, lang, declare, Evented, Observable,
+    _, lang, declare, Evented,
     _WidgetBase,
     TimeEntry,
     DateTimeUtil, syncFrom,
@@ -40,6 +40,8 @@ function (
         taskStore: null,
 
         marginForResizeHandle: 0.05,
+
+        selectedId: null,
         
         _internalStore: null,
 
@@ -51,11 +53,12 @@ function (
         constructor: function() {
             this._internalStore = new DailyTimeWidgetStore().getObservable();
             this.own(
-                syncFrom(this, 'date', this._internalStore),
-                syncFrom(this, 'startHour', this._internalStore),
-                syncFrom(this, 'endHour', this._internalStore),
-                syncFrom(this, 'taskStore', this._internalStore),
-                syncFrom(this, 'timeEntryStore', this._internalStore, 'sourceStore')
+                syncFrom(this, "date", this._internalStore),
+                syncFrom(this, "startHour", this._internalStore),
+                syncFrom(this, "endHour", this._internalStore),
+                syncFrom(this, "taskStore", this._internalStore),
+                syncFrom(this, "timeEntryStore", this._internalStore, "sourceStore"),
+                syncFrom(this, "selectedId", this._internalStore)
             );
             this._view = new DailyTimeWidgetView({
                 model: this
@@ -68,7 +71,8 @@ function (
 
         postCreate: function() {
             this.own(
-                this._view.on("endDrag", lang.hitch(this, "_endDragListener"))
+                this._view.on("endDrag", lang.hitch(this, "_endDragListener")),
+                this._view.on("click", lang.hitch(this, "_clickListener"))
             );
         },
 
@@ -86,6 +90,13 @@ function (
             }
         },
 
+        _clickListener: function(hour) {
+            var entry = this._findEntryContainingHour(hour);
+            if (entry && entry.id !== this.selectedId) {
+                this.set("selectedId", entry.id);
+            }
+        },
+
         _findEntryContainingHour: function(hour) {
             var result = null;
             _.forEach(this._internalStore.query({}), function(entry) {
@@ -99,9 +110,9 @@ function (
 
         _isHourAtStartOrEndOfEntry: function(timeEntry, hour) {
             if (hour < timeEntry.startHour + this.marginForResizeHandle) {
-                return 'start';
+                return "start";
             } else if (hour > timeEntry.endHour - this.marginForResizeHandle) {
-                return 'end';
+                return "end";
             } else {
                 return false;
             }
@@ -114,7 +125,7 @@ function (
                 return; // The selected range is too small.
             }
 
-            this.emit('createTimeEntry', {
+            this.emit("createTimeEntry", {
                 timeEntry: timeEntry
             });
         },
@@ -122,24 +133,24 @@ function (
         _doEndDragAdjust: function(event, timeEntry, startOrEnd) {
             timeEntry = this.timeEntryStore.get(timeEntry.id);
             var modifiedTimeEntry = new TimeEntry({
-                id: timeEntry.get('id'),
-                startHour: timeEntry.get('startHour'),
-                endHour: timeEntry.get('endHour')
+                id: timeEntry.get("id"),
+                startHour: timeEntry.get("startHour"),
+                endHour: timeEntry.get("endHour")
             });
 
             var destinationHour = DateTimeUtil.roundToFifteenMinutes(event.endHour);
-            var propertyToModify = startOrEnd + 'Hour';
+            var propertyToModify = startOrEnd + "Hour";
             if (destinationHour === timeEntry.get(propertyToModify)) {
-                return; // Didn't change significantly.
+                return; // Didn"t change significantly.
             }
             modifiedTimeEntry.set(propertyToModify, destinationHour);
-            if (modifiedTimeEntry.get('startHour') === modifiedTimeEntry.get('endHour')) {
+            if (modifiedTimeEntry.get("startHour") === modifiedTimeEntry.get("endHour")) {
                 // adjusted to zero time... Just delete it.
-                this.emit('deleteTimeEntry', {
-                    timeEntryId: modifiedTimeEntry.get('id')
+                this.emit("deleteTimeEntry", {
+                    timeEntryId: modifiedTimeEntry.get("id")
                 });
             } else {
-                this.emit('updateTimeEntry', {
+                this.emit("updateTimeEntry", {
                     timeEntry: modifiedTimeEntry
                 });
             }
@@ -149,17 +160,17 @@ function (
             var diff = event.endHour - event.startHour;
             diff = DateTimeUtil.roundToFifteenMinutes(diff);
             if (diff === 0) {
-                return; // Didn't change significantly.
+                return; // Didn"t change significantly.
             }
 
             timeEntry = this.timeEntryStore.get(timeEntry.id);
             var modifiedTimeEntry = new TimeEntry({
-                id: timeEntry.get('id'),
-                startHour: timeEntry.get('startHour') + diff,
-                endHour: timeEntry.get('endHour') + diff
+                id: timeEntry.get("id"),
+                startHour: timeEntry.get("startHour") + diff,
+                endHour: timeEntry.get("endHour") + diff
             });
 
-            this.emit('updateTimeEntry', {
+            this.emit("updateTimeEntry", {
                 timeEntry: modifiedTimeEntry
             });
         },

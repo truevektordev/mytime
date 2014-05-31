@@ -171,7 +171,7 @@ div.timegrid {
 			bottom: 0;
             left: 0;
             right: 0;
-			opacity: .7;
+			opacity: .8;
 			border-width: 1px;
 			border-style: solid none;
 
@@ -195,6 +195,11 @@ div.timegrid {
 				border-top-right-radius: .5em;
 				border-bottom-right-radius: .5em;
 			}
+
+            .timegrid .time-bar.selected {
+                opacity: 1;
+                border-color: #333 !important;
+            }
 			
 div.timelist {
 	width: 300px;
@@ -209,7 +214,13 @@ div.timelist {
 		margin: 0 0 .1em 0;
         font-size: 80%;
         position: relative;
+        opacity: .8;
 	}
+
+    .timelist .timeentry.selected {
+        border-width: 1px 2px 2px 1px;
+        opacity: 1;
+    }
 
         .dijitMenuItem .task,
         .timelist .timeentry .task {

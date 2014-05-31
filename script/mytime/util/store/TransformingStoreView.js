@@ -138,11 +138,25 @@ define([
         },
 
         refreshItem: function(id) {
-            var object = this.sourceStore.get(id);
+            var object = this._getItemFromSourceStoreIfMatchesSourceQuery(id);
             if (object) {
                 this._onUpdate(object);
             } else {
                 this.remove(id);
+            }
+        },
+
+        _getItemFromSourceStoreIfMatchesSourceQuery: function(id) {
+            var object = this.sourceStore.get(id);
+            if (object && this.sourceQuery) {
+                var queryResult = this.sourceStore.query(this.sourceQuery);
+                if (_.contains(queryResult, object)) {
+                    return object;
+                } else {
+                    return null;
+                }
+            } else {
+                return object;
             }
         },
 

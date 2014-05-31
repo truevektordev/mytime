@@ -1,4 +1,4 @@
-<div class="timeentry edit" data-timeentry-id="<%= timeEntryId %>" data-task-id="<%= taskId %>"
+<div class="timeentry edit<%= selected ? ' selected' : '' %>" data-timeentry-id="<%= timeEntryId %>" data-task-id="<%= taskId %>"
      style="background-color: <%= Colors.base(color) %>; background: linear-gradient(to bottom right, <%=
      Colors.light(color) %>, <%= Colors.shadow(color) %>)">
     <span class="task"></span>

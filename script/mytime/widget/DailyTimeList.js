@@ -37,7 +37,7 @@ function (
         timeEntryStore: null,
         taskStore: null,
 
-        selectedIds: null,
+        selectedId: null,
         editingId: null,
         _editingStartData: null,
 
@@ -54,9 +54,9 @@ function (
             var _this = this;
             this.own(
                 whenAllPropertiesSet(this, ["date", "timeEntryStore", "taskStore"], lang.hitch(this, "_initialize")),
-                on(this.domNode, on.selector(".timeentry", "click"), function() {
+                on(this.domNode, on.selector(".timeentry", "click"), function(event) {
                     // NOTE: for 'on' with selector, 'this' is the node identified by the selector.
-                    _this._onEntryClick(this);
+                    _this._onEntryClick(event, this);
                 })
             );
         },
@@ -68,7 +68,7 @@ function (
                 sourceQuery: {date: this.date},
                 transform: lang.hitch(this, function(input) {
                     var entry = new TimeEntry(input);
-                    entry.selected = _.contains(this.selectedIds, entry.id);
+                    entry.selected = entry.id === this.selectedId;
                     entry.editing = entry.id === this.editingId;
                     return entry;
                 })
@@ -83,7 +83,8 @@ function (
 
             this.own(
                 this.watch("date", lang.hitch(this, "_dateChanged")),
-                this.watch("editingId", lang.hitch(this, "_editingIdChanged")),
+                this.watch("editingId", lang.hitch(this, "_editingOrSelectedIdChanged")),
+                this.watch("selectedId", lang.hitch(this, "_editingOrSelectedIdChanged")),
                 this._internalStore.observe(delegateObserve("_onTimeEntryAdded", null, null, this))
             );
         },
@@ -115,6 +116,7 @@ function (
                 code: "[&nbsp;&nbsp;&nbsp;]",
                 name: "No Task",
                 color: null,
+                selected: timeEntry.selected,
                 jiraLoggable: false
             };
             if (task) {
@@ -153,19 +155,29 @@ function (
             this._internalStore.set("sourceQuery", {date: this.date});
         },
 
-        _onEntryClick: function(entryNode) {
+        _onEntryClick: function(event, entryNode) {
             var id = domAttr.get(entryNode, "data-timeentry-id");
             this.set("editingId", id);
+            this.set("selectedId", id);
         },
 
-        _editingIdChanged: function(prop, prevValue, value) {
+        _editingOrSelectedIdChanged: function(prop, prevValue, value) {
             if (value !== prevValue) {
                 if (prevValue) {
                     this._internalStore.refreshItem(prevValue);
                 }
                 if (value) {
                     this._internalStore.refreshItem(value);
-                    this._taskCombo.focusAndSelectAll();
+                    if (prop === "editingId") {
+                        this._taskCombo.focusAndSelectAll();
+                    }
+                }
+
+                if (prop === "selectedId") {
+                    // When a new different item is selected, stop editing the previous selection.
+                    if (this.editingId && value !== this.editingId) {
+                        this.set("editingId", null);
+                    }
                 }
             }
         },
@@ -183,8 +195,10 @@ function (
         },
 
         _onTimeEntryAdded: function(timeEntry) {
+            // When an new time entry is added switch to editing it.
             _.defer(lang.hitch(this, function() {
                 this.set("editingId", timeEntry.id);
+                this.set("selectedId", timeEntry.id);
             }));
         }
 
