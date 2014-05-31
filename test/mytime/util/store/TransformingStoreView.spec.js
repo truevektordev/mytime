@@ -44,7 +44,7 @@ define([
 
         function setupWithObserver() {
             var observable = setup().getObservable();
-            observable.query().observe(observer);
+            observable.query().observe(observer, true);
             return observable;
         }
 
@@ -205,6 +205,22 @@ define([
                 expect(queryResults[2]).to.deep.equal({id: "b", sort: 200});
                 expect(observer).to.be.calledOnce;
                 expect(observer).to.be.calledWith({id: "c", sort: 50}, 2, 0);
+            });
+            it("notifies if item in source query results", function() {
+                var store = setupWithObserver();
+                store.set("sourceQuery", {id: "b"});
+                observer.reset();
+
+                store.refreshItem("b");
+                expect(observer).to.have.been.calledWith({id: "b", sort: 200}, 0, 0);
+            });
+            it("does nothing if item not in source query results", function() {
+                var store = setupWithObserver();
+                store.set("sourceQuery", {id: "b"});
+                observer.reset();
+
+                store.refreshItem("a");
+                expect(observer).not.to.have.been.called;
             });
         });
 
