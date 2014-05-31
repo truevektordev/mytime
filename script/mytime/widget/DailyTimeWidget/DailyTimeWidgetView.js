@@ -101,13 +101,22 @@ function (declare,
                 this.model.watch('date', lang.hitch(this, "_renderDate")),
                 this.model._internalStore.observe(lang.hitch(this, '_timeEntryStoreListener'), true),
 
-                on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown'))
+                on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown')),
+                on(this.timeRowsContainer, "click", lang.hitch(this, '_mouseClick'))
             );
             this._renderDate();
         },
 
         _currentDrag: null,
         _dragMouseEventHandles: null,
+
+        _mouseClick: function(e) {
+            var cell = this._getContainingCell(e.target);
+            if (cell) {
+                var timeAtCursor = this._getTimeAtPosition(e.x, cell);
+                this.emit("click", timeAtCursor);
+            }
+        },
 
         _mouseDown: function(e) {
             var cell = this._getContainingCell(e.target);
@@ -284,6 +293,7 @@ function (declare,
             domStyle.set(timeBar, "border-left-color", lighter);
             domStyle.set(timeBar, "border-bottom-color", darker);
             domStyle.set(timeBar, "border-right-color", darker);
+            domClass.toggle(timeBar, "selected", timeEntry.selected);
         },
 
         _setTimeBarSize: function(timeBar, slot) {

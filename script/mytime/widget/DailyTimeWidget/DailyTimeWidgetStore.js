@@ -15,6 +15,8 @@ define([
         startHour: 0,
         endHour: 24,
 
+        selectedId: null,
+
         sourceQuery: {
             date: "match-none-until-initialized"
         },
@@ -31,6 +33,7 @@ define([
             this.watch("startHour", lang.hitch(this, "refresh"));
             this.watch("endHour", lang.hitch(this, "refresh"));
             this.watch("taskStore", lang.hitch(this, "refresh"));
+            this.watch("selectedId", lang.hitch(this, "_selectedIdChanged"));
         },
 
         transform: function(timeEntry) {
@@ -38,6 +41,7 @@ define([
                 return null;
             }
             timeEntry = new TimeEntry(timeEntry);
+            timeEntry.selected = (timeEntry.id === this.selectedId);
             timeEntry.startHour = this._constrainStartHour(timeEntry.startHour);
             timeEntry.endHour = this._constrainEndHour(timeEntry.endHour);
             if (timeEntry.taskId && this.taskStore) {
@@ -61,6 +65,18 @@ define([
 
         _constrainEndHour: function(endHour) {
             return Math.min(endHour, this.endHour + 1);
+        },
+
+        _selectedIdChanged: function(prop, oldValue, value) {
+            if (oldValue !== value) {
+                if (oldValue) {
+                    this.refreshItem(oldValue);
+                }
+                if (value) {
+                    this.refreshItem(value);
+                }
+            }
         }
+
     });
 });

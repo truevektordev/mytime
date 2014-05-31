@@ -37,6 +37,9 @@ define([
             this.own(sync(this, 'currentDate', this._daysInWeekList, 'selectedDate'));
             this.own(sync(this, 'currentDate', this._dailyTimeWidget, 'date'));
             this.own(sync(this, 'currentDate', this._dailyTimeList, 'date'));
+            this.own(sync(this._dailyTimeWidget, 'selectedId', this._dailyTimeList, 'selectedId'));
+
+
             this.own(syncFrom(modelRegistry, 'timeEntryStore', this._daysInWeekList));
             this.own(syncFrom(modelRegistry, 'timeEntryStore', this._dailyTimeWidget));
             this.own(syncFrom(modelRegistry, 'taskStore', this._dailyTimeWidget));
