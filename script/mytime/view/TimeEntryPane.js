@@ -49,10 +49,16 @@ define([
             this.own(this._dailyTimeWidget.on('createTimeEntry', lang.hitch(this, '_createTimeEntry')));
             this.own(this._dailyTimeWidget.on('updateTimeEntry', lang.hitch(this, '_updateTimeEntry')));
             this.own(this._dailyTimeWidget.on('deleteTimeEntry', lang.hitch(this, '_deleteTimeEntry')));
+
+
         },
 
         _createTimeEntry: function(entry) {
-            new CreateTimeEntryCommand({timeEntry: entry.timeEntry}).exec();
+            new CreateTimeEntryCommand({timeEntry: entry.timeEntry}).exec()
+                .then(lang.hitch(this, function(result) {
+                    // When an entry is added start editing it.
+                    this._dailyTimeList.set("editingId", result.timeEntryId);
+                }));
         },
 
         _updateTimeEntry: function(entry) {

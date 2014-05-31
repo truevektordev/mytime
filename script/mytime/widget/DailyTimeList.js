@@ -84,8 +84,7 @@ function (
             this.own(
                 this.watch("date", lang.hitch(this, "_dateChanged")),
                 this.watch("editingId", lang.hitch(this, "_editingOrSelectedIdChanged")),
-                this.watch("selectedId", lang.hitch(this, "_editingOrSelectedIdChanged")),
-                this._internalStore.observe(delegateObserve("_onTimeEntryAdded", null, null, this))
+                this.watch("selectedId", lang.hitch(this, "_editingOrSelectedIdChanged"))
             );
         },
 
@@ -192,14 +191,6 @@ function (
                     taskId: taskId
                 }}).exec();
             }
-        },
-
-        _onTimeEntryAdded: function(timeEntry) {
-            // When an new time entry is added switch to editing it.
-            _.defer(lang.hitch(this, function() {
-                this.set("editingId", timeEntry.id);
-                this.set("selectedId", timeEntry.id);
-            }));
         }
 
     });
