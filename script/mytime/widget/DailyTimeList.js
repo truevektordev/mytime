@@ -6,7 +6,7 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
-    "dijit/_WidgetBase",
+    "dijit/_WidgetBase", "dijit/form/TextArea",
     "mytime/widget/TaskPickerCombo",
     "mytime/model/TimeEntry",
     "mytime/command/UpdateTimeEntryCommand",
@@ -18,7 +18,7 @@ define([
 function (
     _, lang, declare,
     domConstruct, domAttr, on, query, Evented,
-    _WidgetBase,
+    _WidgetBase, TextArea,
     TaskPickerCombo,
     TimeEntry,
     UpdateTimeEntryCommand,
@@ -45,6 +45,7 @@ function (
         _list: null,
 
         _taskCombo: null,
+        _notesBox: null,
 
         buildRendering: function() {
             this.inherited(arguments);
@@ -63,6 +64,7 @@ function (
         
         _initialize: function() {
             this._setupTaskCombo();
+            this._setupNotesBox();
             this._internalStore = new TransformingStoreView({
                 sourceStore: this.timeEntryStore,
                 sourceQuery: {date: this.date},
@@ -94,6 +96,13 @@ function (
             });
             this.own(
                 on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange"))
+            );
+        },
+
+        _setupNotesBox: function() {
+            this._notesBox = new TextArea();
+            this.own(
+                on(this._notesBox, "change", lang.hitch(this, "_onNotesBoxChange"))
             );
         },
 
@@ -147,6 +156,11 @@ function (
             this._taskCombo.placeAt(comboContainer);
             this._taskCombo.startup();
 
+            var noteContainer = query(".note", dom)[0];
+            this._notesBox.set("value", timeEntry.text);
+            this._notesBox.placeAt(noteContainer);
+            this._notesBox.startup();
+
             return dom;
         },
 
@@ -189,6 +203,17 @@ function (
                 new UpdateTimeEntryCommand({timeEntry: {
                     id: this.editingId,
                     taskId: taskId
+                }}).exec();
+            }
+        },
+
+        _onNotesBoxChange: function() {
+            var text = this._notesBox.get('value');
+            if (text !== this._editingStartData.text) {
+                this._editingStartData.text = text;
+                new UpdateTimeEntryCommand({timeEntry: {
+                    id: this.editingId,
+                    text: text
                 }}).exec();
             }
         }
