@@ -8,6 +8,8 @@
     <span class="note"><%= text %></span>
     <% if (jiraLoggable) { %>
     <a class="jira-create-worklog" target="_blank"
-       href="https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=<%= code %>&timeLogged=<%= duration %>h&timeEntyId=<%= timeEntryId %>&comment=<%= text %>">JIRA</a>
+       href="https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=<%= code %>&timeLogged=<%= duration %>h&timeEntyId=<%= timeEntryId %>&comment=<%= text %>">
+        <img src="images/jira-icon.png"><span class="check">&#x2713;</span>
+    </a>
     <% } %>
 </div>

@@ -245,14 +245,27 @@ div.timelist {
                 font-style: italic;
             }
 
-            .timelist .timeentry .jira-create-worklog {
-                font-size: 80%;
-                position: absolute;
-                bottom: 3px;
-                right: 3px;
+        .timelist .jira-create-worklog {
+            font-size: 90%;
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            text-decoration: none;
+            color: black;
+            text-shadow: 1px 2px black;
+        }
+
+            .timelist .jira-create-worklog:visited {
+                color: white;
             }
 
-		.timelist .timeentry .note {
+            .timelist .jira-create-worklog img {
+                height: 1em;
+                width: 1em;
+            }
+
+		.timelist .timeentry .note .dijitTextArea {
+            width: 90%;
 		}
 		
 		.timelist .timeentry input.key {
