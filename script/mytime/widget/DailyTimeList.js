@@ -6,7 +6,7 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
-    "dijit/_WidgetBase", "dijit/form/TextArea",
+    "dijit/_WidgetBase", "dijit/form/Textarea",
     "mytime/widget/TaskPickerCombo",
     "mytime/model/TimeEntry",
     "mytime/command/UpdateTimeEntryCommand",
@@ -18,7 +18,7 @@ define([
 function (
     _, lang, declare,
     domConstruct, domAttr, on, query, Evented,
-    _WidgetBase, TextArea,
+    _WidgetBase, Textarea,
     TaskPickerCombo,
     TimeEntry,
     UpdateTimeEntryCommand,
@@ -100,7 +100,7 @@ function (
         },
 
         _setupNotesBox: function() {
-            this._notesBox = new TextArea();
+            this._notesBox = new Textarea();
             this.own(
                 on(this._notesBox, "change", lang.hitch(this, "_onNotesBoxChange"))
             );
