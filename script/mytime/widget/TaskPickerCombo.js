@@ -45,10 +45,6 @@ function (
             }
         },
 
-        _isValidCode: function(code) {
-            return code && code.length > 1;
-        },
-
         _parseStringToTask: function(string) {
             string = string.trim();
             if (string.length === 0) {
@@ -66,11 +62,15 @@ function (
                     delete task.name;
                 }
             }
-            return task;
+            return this._isValidCode(task.code) ? task : null;
+        },
+
+        _isValidCode: function(code) {
+            return code && code.length > 1;
         },
 
         labelFunc: function(item, store) {
-            return '<span class="task" style="color: ' + Colors.dark(item.color) + '"><span class="code">' + item.code + '</span> <span class="name">' + (item.name || "") + '</span></span>';
+            return '<span class="task" style="color: ' + Colors.dark(item.color) + '"><span class="code">' + _.escape(item.code) + '</span> <span class="name">' + _.escape(item.name || "") + '</span></span>';
         },
 
         focusAndSelectAll: function() {
