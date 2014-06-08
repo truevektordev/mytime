@@ -198,11 +198,8 @@ function (
             when(this.taskStore.get(taskId), function(task) {
                 var dialog = new TaskDialog({value: task});
                 dialog.showAndWaitForUser().then(function(task) {
-                    console.log("DG OK");
                     new UpdateTaskCommand({task: task}).exec();
-                }, function(err) {
-                    console.log("DG CANCEL");
-                });
+                }, function() { /* No need to act on cancel. */ });
             });
         },
 
