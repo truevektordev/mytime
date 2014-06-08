@@ -15,6 +15,7 @@ define([
     'test/mytime/util/whenAllPropertiesSet.spec',
     'test/mytime/widget/DailyTimeWidget/DailyTimeWidgetStore.spec',
     'test/mytime/widget/DailyTimeWidget/DailyTimeWidgetView.spec',
+    'test/mytime/widget/TaskForm.spec',
     'test/mytime/widget/TaskPickerCombo.spec',
 
     'test/dojo/Stateful.spec',

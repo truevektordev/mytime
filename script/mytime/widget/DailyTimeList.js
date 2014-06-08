@@ -4,24 +4,24 @@
  * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
  */
 define([
-    "lodash", "dojo/_base/lang", "dojo/_base/declare",
-    "dojo/dom-construct", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
+    "lodash", "dojo/_base/lang", "dojo/_base/declare", "dojo/when",
+    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
     "dijit/_WidgetBase", "dijit/form/Textarea",
-    "mytime/widget/TaskPickerCombo",
+    "mytime/widget/TaskPickerCombo", "mytime/widget/TaskDialog",
     "mytime/model/TimeEntry",
-    "mytime/command/UpdateTimeEntryCommand",
+    "mytime/command/UpdateTimeEntryCommand", "mytime/command/UpdateTaskCommand",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
     "mytime/util/store/StoreDrivenDom", "mytime/util/store/delegateObserve",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
 ],
 function (
-    _, lang, declare,
-    domConstruct, domAttr, on, query, Evented,
+    _, lang, declare, when,
+    domConstruct, domClass, domAttr, on, query, Evented,
     _WidgetBase, Textarea,
-    TaskPickerCombo,
+    TaskPickerCombo, TaskDialog,
     TimeEntry,
-    UpdateTimeEntryCommand,
+    UpdateTimeEntryCommand, UpdateTaskCommand,
     Colors, whenAllPropertiesSet, TransformingStoreView,
     StoreDrivenDom, delegateObserve,
     template, editTemplate) {
@@ -55,7 +55,7 @@ function (
             var _this = this;
             this.own(
                 whenAllPropertiesSet(this, ["date", "timeEntryStore", "taskStore"], lang.hitch(this, "_initialize")),
-                on(this.domNode, on.selector(".timeentry", "click"), function(event) {
+                on(this.domNode, on.selector(".task, .note, .menu-button", "click"), function(event) {
                     // NOTE: for 'on' with selector, 'this' is the node identified by the selector.
                     _this._onEntryClick(event, this);
                 })
@@ -121,7 +121,7 @@ function (
                 taskId: "",
                 text: timeEntry.text || "",
                 duration: timeEntry.endHour - timeEntry.startHour,
-                code: "[&nbsp;&nbsp;&nbsp;]",
+                code: "[   ]",
                 name: "No Task",
                 color: null,
                 selected: timeEntry.selected,
@@ -129,10 +129,10 @@ function (
             };
             if (task) {
                 data.taskId = task.id || "";
-                data.code = task.code || "&nbsp;";
+                data.code = task.code || "";
                 data.name = task.name || "";
                 data.color = task.color || null;
-                data.jiraLoggable = task.code.indexOf('CAYENNE-') == 0 || task.code.indexOf('PSP-') == 0;
+                data.jiraLoggable = task.code.indexOf("CAYENNE-") == 0 || task.code.indexOf("PSP-") == 0;
             }
             if (timeEntry.editing) {
                 return this._renderEditingEntry(timeEntry, task, data);
@@ -168,10 +168,42 @@ function (
             this._internalStore.set("sourceQuery", {date: this.date});
         },
 
-        _onEntryClick: function(event, entryNode) {
-            var id = domAttr.get(entryNode, "data-timeentry-id");
-            this.set("editingId", id);
-            this.set("selectedId", id);
+        _onEntryClick: function(event, node) {
+            var entryNode = this._getTimeEntryNodeContaining(node);
+            var entryId = domAttr.get(entryNode, "data-timeentry-id");
+            var taskId = domAttr.get(entryNode, "data-task-id");
+
+            if (domClass.contains(node, 'task') || domClass.contains(node, 'note')) {
+                this.set("selectedId", entryId);
+                this.set("editingId", entryId);
+            } else if (domClass.contains(node, 'menu-button')) {
+                this._onMenuClick(node, entryId, taskId)
+            }
+        },
+
+        _getTimeEntryNodeContaining: function(node) {
+            do {
+                if (domClass.contains(node, 'timeentry')) {
+                    return node;
+                }
+                node = node.parentNode;
+            } while (node);
+            return null;
+        },
+
+        _onMenuClick: function(buttonNode, entryId, taskId) {
+            if (!taskId) {
+                return;
+            }
+            when(this.taskStore.get(taskId), function(task) {
+                var dialog = new TaskDialog({value: task});
+                dialog.showAndWaitForUser().then(function(task) {
+                    console.log("DG OK");
+                    new UpdateTaskCommand({task: task}).exec();
+                }, function(err) {
+                    console.log("DG CANCEL");
+                });
+            });
         },
 
         _editingOrSelectedIdChanged: function(prop, prevValue, value) {

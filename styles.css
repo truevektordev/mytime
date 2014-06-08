@@ -245,11 +245,24 @@ div.timelist {
                 font-style: italic;
             }
 
-        .timelist .jira-create-worklog {
-            font-size: 90%;
+        .timelist .top-right {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+        }
+
+        .timelist .bottom-right {
             position: absolute;
             bottom: 3px;
             right: 3px;
+        }
+
+            .timelist .menu-button img {
+                vertical-align: bottom;
+            }
+
+        .timelist .jira-create-worklog {
+            font-size: 90%;
             text-decoration: none;
             color: black;
             text-shadow: 1px 2px black;
@@ -289,4 +302,22 @@ div.timegrid {
 div.timelist {
 	float: left;
 	margin-left: .5em;
+}
+
+form label {
+    font-weight: bold;
+}
+
+.form-field, .form-buttons {
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+
+.form-buttons {
+    text-align: right;
+}
+
+.task-form label {
+    display: inline-block;
+    width: 3.5em;
 }
