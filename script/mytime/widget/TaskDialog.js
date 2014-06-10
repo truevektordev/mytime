@@ -50,7 +50,7 @@ define([
                 this._formDeferred.resolve(value);
                 this._formDeferred = null;
             }
-            this.hide();
+            // NOTE: hide is not needed because the Dialog code seems to handle it automatically.
         },
 
         _cancel: function() {
