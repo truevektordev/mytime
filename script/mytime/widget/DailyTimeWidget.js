@@ -34,7 +34,7 @@ function (
 
         startHour: 7,
 
-        endHour: 19,
+        endHour: 22,
 
         timeEntryStore: null,
         taskStore: null,
