@@ -6,24 +6,24 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare", "dojo/when",
     "dojo/dom-construct", "dojo/dom-class", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
-    "dijit/_WidgetBase", "dijit/form/Textarea",
+    "dijit/_WidgetBase", "dijit/form/Textarea", "dijit/focus",
     "mytime/widget/TaskPickerCombo", "mytime/widget/TaskDialog",
     "mytime/model/TimeEntry",
     "mytime/command/UpdateTimeEntryCommand", "mytime/command/UpdateTaskCommand",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
-    "mytime/util/store/StoreDrivenDom", "mytime/util/store/delegateObserve",
+    "mytime/util/store/StoreDrivenDom", "mytime/util/DateTimeUtil", "mytime/util/jira",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
 ],
 function (
     _, lang, declare, when,
     domConstruct, domClass, domAttr, on, query, Evented,
-    _WidgetBase, Textarea,
+    _WidgetBase, Textarea, focusUtil,
     TaskPickerCombo, TaskDialog,
     TimeEntry,
     UpdateTimeEntryCommand, UpdateTaskCommand,
     Colors, whenAllPropertiesSet, TransformingStoreView,
-    StoreDrivenDom, delegateObserve,
+    StoreDrivenDom, DateTimeUtil, jira,
     template, editTemplate) {
 
     /**
@@ -58,7 +58,8 @@ function (
                 on(this.domNode, on.selector(".task, .note, .menu-button", "click"), function(event) {
                     // NOTE: for 'on' with selector, 'this' is the node identified by the selector.
                     _this._onEntryClick(event, this);
-                })
+                }),
+                on(document, 'click', lang.hitch(this, '_onClickElsewhere'))
             );
         },
         
@@ -95,14 +96,17 @@ function (
                 store: this.taskStore
             });
             this.own(
-                on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange"))
+                on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange")),
+                on(this._taskCombo, "blur", lang.hitch(this, "_onEditorBlur"))
+
             );
         },
 
         _setupNotesBox: function() {
             this._notesBox = new Textarea();
             this.own(
-                on(this._notesBox, "change", lang.hitch(this, "_onNotesBoxChange"))
+                on(this._notesBox, "change", lang.hitch(this, "_onNotesBoxChange")),
+                on(this._notesBox, "blur", lang.hitch(this, "_onEditorBlur"))
             );
         },
 
@@ -120,19 +124,21 @@ function (
                 timeEntryId: timeEntry.id,
                 taskId: "",
                 text: timeEntry.text || "",
-                duration: timeEntry.endHour - timeEntry.startHour,
+                duration: DateTimeUtil.duration(timeEntry),
                 code: "[   ]",
                 name: "No Task",
                 color: null,
                 selected: timeEntry.selected,
-                jiraLoggable: false
+                jiraLoggingUrl: ""
             };
             if (task) {
                 data.taskId = task.id || "";
                 data.code = task.code || "";
                 data.name = task.name || "";
                 data.color = task.color || null;
-                data.jiraLoggable = task.code.indexOf("CAYENNE-") == 0 || task.code.indexOf("PSP-") == 0;
+                if (jira.isJiraIssueKey(task.code)) {
+                    data.jiraLoggingUrl = jira.buildTimeLoggingLink(task.code, timeEntry);
+                }
             }
             if (timeEntry.editing) {
                 return this._renderEditingEntry(timeEntry, task, data);
@@ -248,6 +254,17 @@ function (
                     text: text
                 }}).exec();
             }
+        },
+
+        _onClickElsewhere: function(event) {
+
+        },
+
+        _onEditorBlur: function() {
+            if (_.contains(focusUtil.activeStack, this._taskCombo.id) || _.contains(focusUtil.activeStack, this._notesBox.id)) {
+                return;
+            }
+            this.set('editingId', null);
         }
 
     });

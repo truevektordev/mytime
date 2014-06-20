@@ -17,7 +17,8 @@ define([
         it("#_parseStringToTask", function() {
              expect(parse("")).to.equal(null);
              expect(parse("    ")).to.equal(null);
-             expect(parse("A")).to.deep.equal({ code: "A" });
+             expect(parse("A")).to.deep.equal(null);
+             expect(parse("AA")).to.deep.equal({ code: "AA" });
              expect(parse("ARP-123")).to.deep.equal({ code: "ARP-123" });
              expect(parse("ARP-123 ")).to.deep.equal({ code: "ARP-123" });
              expect(parse("ARP-123 h")).to.deep.equal({ code: "ARP-123", name: "h" });
