@@ -5,7 +5,7 @@
  */
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare", "dojo/when",
-    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
+    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented", "dojo/dom",
     "dijit/_WidgetBase", "dijit/form/Textarea", "dijit/focus",
     "mytime/widget/TaskPickerCombo", "mytime/widget/TaskDialog",
     "mytime/model/TimeEntry",
@@ -17,7 +17,7 @@ define([
 ],
 function (
     _, lang, declare, when,
-    domConstruct, domClass, domAttr, on, query, Evented,
+    domConstruct, domClass, domAttr, on, query, Evented, dom,
     _WidgetBase, Textarea, focusUtil,
     TaskPickerCombo, TaskDialog,
     TimeEntry,
@@ -59,7 +59,7 @@ function (
                     // NOTE: for 'on' with selector, 'this' is the node identified by the selector.
                     _this._onEntryClick(event, this);
                 }),
-                on(document, 'click', lang.hitch(this, '_onClickElsewhere'))
+                on(document, 'mouseup', lang.hitch(this, '_onClickElsewhere'))
             );
         },
         
@@ -96,17 +96,14 @@ function (
                 store: this.taskStore
             });
             this.own(
-                on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange")),
-                on(this._taskCombo, "blur", lang.hitch(this, "_onEditorBlur"))
-
+                on(this._taskCombo, "change", lang.hitch(this, "_onTaskComboChange"))
             );
         },
 
         _setupNotesBox: function() {
             this._notesBox = new Textarea();
             this.own(
-                on(this._notesBox, "change", lang.hitch(this, "_onNotesBoxChange")),
-                on(this._notesBox, "blur", lang.hitch(this, "_onEditorBlur"))
+                on(this._notesBox, "change", lang.hitch(this, "_onNotesBoxChange"))
             );
         },
 
@@ -183,7 +180,7 @@ function (
                 this.set("selectedId", entryId);
                 this.set("editingId", entryId);
             } else if (domClass.contains(node, 'menu-button')) {
-                this._onMenuClick(node, entryId, taskId)
+                this._onMenuClick(node, entryId, taskId);
             }
         },
 
@@ -223,13 +220,6 @@ function (
                         this._taskCombo.focusAndSelectAll();
                     }
                 }
-
-                if (prop === "selectedId") {
-                    // When a new different item is selected, stop editing the previous selection.
-                    if (this.editingId && value !== this.editingId) {
-                        this.set("editingId", null);
-                    }
-                }
             }
         },
 
@@ -256,12 +246,18 @@ function (
             }
         },
 
+        /**
+         * Hide the editor when clicking outside this widget.
+         */
         _onClickElsewhere: function(event) {
-
-        },
-
-        _onEditorBlur: function() {
-            if (_.contains(focusUtil.activeStack, this._taskCombo.id) || _.contains(focusUtil.activeStack, this._notesBox.id)) {
+            if (!this.editingId) {
+                return;
+            }
+            if (_.contains(focusUtil.activeStack, this._taskCombo.id) ||
+                _.contains(focusUtil.activeStack, this._notesBox.id)) {
+                return;
+            }
+            if (event.target === this.domNode || dom.isDescendant(event.target, this.domNode)) {
                 return;
             }
             this.set('editingId', null);
