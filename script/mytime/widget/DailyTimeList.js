@@ -5,25 +5,25 @@
  */
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare", "dojo/when",
-    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented",
-    "dijit/_WidgetBase", "dijit/form/Textarea",
+    "dojo/dom-construct", "dojo/dom-class", "dojo/dom-attr", "dojo/on", "dojo/query", "dojo/Evented", "dojo/dom",
+    "dijit/_WidgetBase", "dijit/form/Textarea", "dijit/focus",
     "mytime/widget/TaskPickerCombo", "mytime/widget/TaskDialog",
     "mytime/model/TimeEntry",
     "mytime/command/UpdateTimeEntryCommand", "mytime/command/UpdateTaskCommand",
     "mytime/util/Colors", "mytime/util/whenAllPropertiesSet", "mytime/util/store/TransformingStoreView",
-    "mytime/util/store/StoreDrivenDom", "mytime/util/store/delegateObserve",
+    "mytime/util/store/StoreDrivenDom", "mytime/util/DateTimeUtil", "mytime/util/jira",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry.html",
     "dojo/text!mytime/widget/DailyTimeList/templates/entry-edit.html"
 ],
 function (
     _, lang, declare, when,
-    domConstruct, domClass, domAttr, on, query, Evented,
-    _WidgetBase, Textarea,
+    domConstruct, domClass, domAttr, on, query, Evented, dom,
+    _WidgetBase, Textarea, focusUtil,
     TaskPickerCombo, TaskDialog,
     TimeEntry,
     UpdateTimeEntryCommand, UpdateTaskCommand,
     Colors, whenAllPropertiesSet, TransformingStoreView,
-    StoreDrivenDom, delegateObserve,
+    StoreDrivenDom, DateTimeUtil, jira,
     template, editTemplate) {
 
     /**
@@ -58,7 +58,8 @@ function (
                 on(this.domNode, on.selector(".task, .note, .menu-button", "click"), function(event) {
                     // NOTE: for 'on' with selector, 'this' is the node identified by the selector.
                     _this._onEntryClick(event, this);
-                })
+                }),
+                on(document, 'mouseup', lang.hitch(this, '_onClickElsewhere'))
             );
         },
         
@@ -120,19 +121,21 @@ function (
                 timeEntryId: timeEntry.id,
                 taskId: "",
                 text: timeEntry.text || "",
-                duration: timeEntry.endHour - timeEntry.startHour,
+                duration: DateTimeUtil.duration(timeEntry),
                 code: "[   ]",
                 name: "No Task",
                 color: null,
                 selected: timeEntry.selected,
-                jiraLoggable: false
+                jiraLoggingUrl: ""
             };
             if (task) {
                 data.taskId = task.id || "";
                 data.code = task.code || "";
                 data.name = task.name || "";
                 data.color = task.color || null;
-                data.jiraLoggable = task.code.indexOf("CAYENNE-") == 0 || task.code.indexOf("PSP-") == 0;
+                if (jira.isJiraIssueKey(task.code)) {
+                    data.jiraLoggingUrl = jira.buildTimeLoggingLink(task.code, timeEntry);
+                }
             }
             if (timeEntry.editing) {
                 return this._renderEditingEntry(timeEntry, task, data);
@@ -177,7 +180,7 @@ function (
                 this.set("selectedId", entryId);
                 this.set("editingId", entryId);
             } else if (domClass.contains(node, 'menu-button')) {
-                this._onMenuClick(node, entryId, taskId)
+                this._onMenuClick(node, entryId, taskId);
             }
         },
 
@@ -217,13 +220,6 @@ function (
                         this._taskCombo.focusAndSelectAll();
                     }
                 }
-
-                if (prop === "selectedId") {
-                    // When a new different item is selected, stop editing the previous selection.
-                    if (this.editingId && value !== this.editingId) {
-                        this.set("editingId", null);
-                    }
-                }
             }
         },
 
@@ -248,6 +244,23 @@ function (
                     text: text
                 }}).exec();
             }
+        },
+
+        /**
+         * Hide the editor when clicking outside this widget.
+         */
+        _onClickElsewhere: function(event) {
+            if (!this.editingId) {
+                return;
+            }
+            if (_.contains(focusUtil.activeStack, this._taskCombo.id) ||
+                _.contains(focusUtil.activeStack, this._notesBox.id)) {
+                return;
+            }
+            if (event.target === this.domNode || dom.isDescendant(event.target, this.domNode)) {
+                return;
+            }
+            this.set('editingId', null);
         }
 
     });

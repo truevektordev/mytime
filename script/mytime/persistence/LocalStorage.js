@@ -86,6 +86,10 @@ function (exports, _, lang) {
                 store.add(item);
             });
             return store;
+        },
+
+        clear: function() {
+            localStorage.clear();
         }
     });
 });

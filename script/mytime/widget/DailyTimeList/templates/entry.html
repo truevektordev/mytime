@@ -10,9 +10,8 @@
         <% if (taskId) { %>
         <a class="menu-button" href="javascript:void(0);"><img src="./images/cog.png"/></a>
         <% } %>
-        <% if (jiraLoggable) { %>
-        <a class="jira-create-worklog" target="_blank"
-           href="https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=<%- code %>&timeLogged=<%- duration %>h&timeEntyId=<%- timeEntryId %>&comment=<%- text %>">
+        <% if (jiraLoggingUrl) { %>
+        <a class="jira-create-worklog" target="_blank" href="<%= jiraLoggingUrl %>">
             <img src="images/jira-icon.png"><span class="check">&#x2713;</span>
         </a>
         <% } %>

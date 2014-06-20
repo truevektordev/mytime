@@ -56,8 +56,10 @@ define([
         _createTimeEntry: function(entry) {
             new CreateTimeEntryCommand({timeEntry: entry.timeEntry}).exec()
                 .then(lang.hitch(this, function(result) {
-                    // When an entry is added start editing it.
-                    this._dailyTimeList.set("editingId", result.timeEntryId);
+                    _.defer(lang.hitch(this, function() {
+                        // When an entry is added start editing it.
+                        this._dailyTimeList.set("editingId", result.timeEntryId);
+                    }));
                 }));
         },
 
