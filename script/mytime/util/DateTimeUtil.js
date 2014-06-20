@@ -97,4 +97,11 @@ function (exports) {
             case 0: return 'Jan'
         }
     };
+
+    exports.duration = function(hour1, hour2) {
+        if (_.isObject(hour1)) {
+            return exports.duration(hour1.startHour, hour1.endHour);
+        }
+        return Math.abs(hour2 - hour1);
+    }
 });
