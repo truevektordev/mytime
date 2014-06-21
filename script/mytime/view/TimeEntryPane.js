@@ -49,8 +49,6 @@ define([
             this.own(this._dailyTimeWidget.on('createTimeEntry', lang.hitch(this, '_createTimeEntry')));
             this.own(this._dailyTimeWidget.on('updateTimeEntry', lang.hitch(this, '_updateTimeEntry')));
             this.own(this._dailyTimeWidget.on('deleteTimeEntry', lang.hitch(this, '_deleteTimeEntry')));
-
-
         },
 
         _createTimeEntry: function(entry) {

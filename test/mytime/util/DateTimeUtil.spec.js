@@ -12,11 +12,23 @@ define(["mytime/util/DateTimeUtil"], function(DateTimeUtil) {
             expect(DateTimeUtil.beginningOfHour(10.2)).to.equal(10);
             expect(DateTimeUtil.beginningOfHour(10.999)).to.equal(10);
         });
+
+        it("fractionOfHour", function() {
+            expect(DateTimeUtil.fractionOfHour(10).toFixed(3)).to.equal('0.000');
+            expect(DateTimeUtil.fractionOfHour(10.2).toFixed(3)).to.equal('0.200');
+            expect(DateTimeUtil.fractionOfHour(10.999).toFixed(3)).to.equal('0.999');
+        });
     
         it("percentageOfHour", function() {
             expect(DateTimeUtil.percentageOfHour(10)).to.equal(0);
             expect(DateTimeUtil.percentageOfHour(10.2)).to.equal(20);
             expect(DateTimeUtil.percentageOfHour(10.999)).to.equal(100);
+        });
+
+        it("getHourFromDate", function() {
+            expect(DateTimeUtil.getHourFromDate(new Date("Jan 1 2013 12:00:00")).toFixed(3)).to.equal('12.000');
+            expect(DateTimeUtil.getHourFromDate(new Date("Jan 1 2013 12:30:00")).toFixed(3)).to.equal('12.500');
+            expect(DateTimeUtil.getHourFromDate(new Date("Jan 1 2013 0:59:59")).toFixed(4)).to.equal('0.9997');
         });
     
         it("convertDateObjectToDateString", function() {

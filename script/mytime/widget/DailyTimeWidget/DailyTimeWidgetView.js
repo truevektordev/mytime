@@ -43,10 +43,15 @@ function (declare,
         _timeBarsByTimeEntryId: null,
         _timeEntryWatchers: null,
 
+        _nowMark: null,
+        _endOfDayMark: null,
+
         constructor: function() {
             this._timeBarsByTimeEntryId = {};
             this._timeEntryWatchers = {};
             this._dragMouseEventHandles = [];
+            this._nowMark = domConstruct.create("div", { "class": "mark now"});
+            this._endOfDayMark = domConstruct.create("div", { "class": "mark end-of-day"});
         },
 
         _renderDate: function() {
@@ -99,12 +104,16 @@ function (declare,
                 this.model.watch('startHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.model.watch('endHour', lang.hitch(this, "_startOrEndHourChanged")),
                 this.model.watch('date', lang.hitch(this, "_renderDate")),
+                this.model.watch('nowHour', lang.hitch(this, "_renderMark", this._nowMark)),
+                this.model.watch('endOfDayHour', lang.hitch(this, "_renderMark", this._endOfDayMark)),
                 this.model._internalStore.observe(lang.hitch(this, '_timeEntryStoreListener'), true),
 
                 on(this.timeRowsContainer, "mousedown", lang.hitch(this, '_mouseDown')),
                 on(this.timeRowsContainer, "click", lang.hitch(this, '_mouseClick'))
             );
             this._renderDate();
+            this._renderMark(this._nowMark, "nowHour", null, this.model.get("nowHour"));
+            this._renderMark(this._endOfDayMark, "endOfDayHour", null, this.model.get("endOfDayHour"));
         },
 
         _currentDrag: null,
@@ -336,6 +345,24 @@ function (declare,
         _startOrEndHourChanged: function(property, prev, value) {
             if (prev !== value) {
                 this._renderRows();
+            }
+        },
+
+        _renderMark: function(markNode, property, prev, time) {
+            var hour = DateTimeUtil.beginningOfHour(time);
+            var container = this._getContainerForHour(hour);
+            if (container) {
+                var fraction = DateTimeUtil.fractionOfHour(time);
+                markNode.style.left = (fraction * 100).toFixed(1) + "%";
+
+                var adjustment = -Math.round(fraction / .5);
+                markNode.style.marginLeft = adjustment + "px";
+
+                domConstruct.place(markNode, container);
+            } else {
+                if (markNode.parentNode) {
+                    markNode.parentNode.removeChild(markNode);
+                }
             }
         }
     });
