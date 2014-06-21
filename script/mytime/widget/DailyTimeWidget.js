@@ -27,6 +27,8 @@ function (
      */
     return declare([_WidgetBase, Evented], {
 
+        declaredClass: "DailyTimeWidget",
+
         /**
          * @type {string} yyyy-mm-dd
          */
@@ -42,6 +44,9 @@ function (
         marginForResizeHandle: 0.05,
 
         selectedId: null,
+
+        nowHour: 0,
+        endOfDayHour: 0,
         
         _internalStore: null,
 
@@ -72,8 +77,13 @@ function (
         postCreate: function() {
             this.own(
                 this._view.on("endDrag", lang.hitch(this, "_endDragListener")),
-                this._view.on("click", lang.hitch(this, "_clickListener"))
+                this._view.on("click", lang.hitch(this, "_clickListener")),
+                this.watch("date", lang.hitch(this, "_updateNowHour"))
             );
+
+            var handle = setInterval(lang.hitch(this, "_updateNowHour"), 15000);
+            this.own({ remove: function() { clearInterval(handle) } });
+            this._updateNowHour();
         },
 
         _endDragListener: function(event) {
@@ -186,6 +196,14 @@ function (
             timeEntry.endHour = DateTimeUtil.roundToFifteenMinutes(timeEntry.endHour);
 
             return timeEntry;
+        },
+
+        _updateNowHour: function() {
+            if (this.date === DateTimeUtil.getCurrentDate()) {
+                this.set("nowHour", DateTimeUtil.getHourFromDate(new Date()));
+            } else {
+                this.set("nowHour", -1);
+            }
         }
 
     });

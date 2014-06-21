@@ -18,14 +18,22 @@ function (exports) {
     };
 
     /**
+     * Return the fraction portion of a time, as a decimal, un-rounded.
+     * @param {number} time
+     * @returns {number} 0 <= x < 1
+     */
+    exports.fractionOfHour = function(time) {
+        return time - Math.floor(time);
+    };
+
+    /**
      * Returns a whole number percentage of the time within the hour. For example, 11.5 would
      * return 50.
      * @param {number} time
      * @returns {number}
      */
     exports.percentageOfHour = function(time) {
-        var percentage = time - Math.floor(time);
-        return Math.round(percentage * 100);
+        return Math.round(exports.fractionOfHour(time) * 100);
     };
 
     exports.roundToFifteenMinutes = function(time) {
@@ -34,6 +42,10 @@ function (exports) {
 
     exports.roundToFiveMinutes = function(time) {
         return Math.round(time * 12) / 12;
+    };
+
+    exports.getHourFromDate = function(date) {
+        return date.getHours() + (date.getMinutes() / 60) + (date.getSeconds() / 60 / 60);
     };
 
     /**

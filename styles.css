@@ -200,6 +200,24 @@ div.timegrid {
                 opacity: 1;
                 border-color: #333 !important;
             }
+
+    .timegrid .mark {
+        position: absolute;
+        height: 120%;
+        width: 2px;
+        top: -10%;
+        left: 55%;
+        margin-left: 0;
+        z-index: 100;
+    }
+
+        .timegrid .mark.now {
+            background-color: rgb(90, 107, 236);
+        }
+
+        .timegrid .mark.end-of-day {
+            background-color: rgb(30, 198, 80);
+        }
 			
 div.timelist {
 	width: 300px;
