@@ -3,13 +3,23 @@
  * Copyright 2014 David Wolverton
  * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
  */
-require({
-    packages: [
-        { name: 'mytime', location: '../../script/mytime' },
-        { name: 'lodash', location: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1', main: 'lodash.min' }
-    ]
-}, ['mytime/debug-helper', 'mytime/main', 'dojo/parser', 'dojo/ready'], function(_1, _2, parser, ready){
-    ready(function(){
-        parser.parse();
+(function() {
+    // main can is optional. It can be a single module id string or an array of module id strings.
+    var main = require.rawConfig.main;
+    if (!main) {
+        main = [];
+    } else if (typeof main === 'string') {
+        main = [main];
+    }
+
+    require({
+        packages: [
+            { name: 'mytime', location: '../../script/mytime' },
+            { name: 'lodash', location: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1', main: 'lodash.min' }
+        ]
+    }, ['mytime/debug-helper', 'dojo/parser', 'dojo/ready'].concat(main), function(_1, parser, ready) {
+        ready(function() {
+            parser.parse();
+        });
     });
-});
+})();

@@ -6,20 +6,24 @@
 define([
     "lodash", "dojo/_base/lang", "dojo/_base/declare",
     "dijit/form/ComboBox",
-    "mytime/command/CreateTaskCommand",
-    "mytime/util/Colors"
+    "mytime/command/CreateTaskCommand", "mytime/model/Task",
+    "mytime/util/Colors",
+    "mytime/widget/TaskPickerComboStore"
 ],
 function (
     _, lang, declare,
     ComboBox,
-    CreateTaskCommand,
-    Colors
-) {
+    CreateTaskCommand, Task,
+    Colors,
+    TaskPickerComboStore
+    ) {
     return declare([ComboBox], {
 
-        searchAttr: "code",
+        searchAttr: "_searchText",
 
         labelType: "html",
+
+        queryExpr: "${0}",
 
         constructor: function() {
             this.baseClass += " taskpicker";
@@ -30,7 +34,18 @@ function (
         },
 
         _setTaskAttr: function(task) {
+            if (task) {
+                task = new Task(task);
+                task._searchText = Task.getDisplayText(task);
+            }
             this.set("item", task);
+        },
+
+        _setStoreAttr: function(store) {
+            if (!(store instanceof TaskPickerComboStore)) {
+                store = new TaskPickerComboStore(store);
+            }
+            this.inherited('_setStoreAttr', [store]);
         },
 
         _handleOnChange: function(newStringValue) {
@@ -70,7 +85,8 @@ function (
         },
 
         labelFunc: function(item, store) {
-            return '<span class="task" style="color: ' + Colors.dark(item.color) + '"><span class="code">' + _.escape(item.code) + '</span> <span class="name">' + _.escape(item.name || "") + '</span></span>';
+            return '<span class="task" style="color: ' + Colors.dark(item.color) + '"><span class="code">' +
+                _.escape(item.code) + '</span> <span class="name">' + _.escape(item.name || "") + '</span></span>';
         },
 
         focusAndSelectAll: function() {

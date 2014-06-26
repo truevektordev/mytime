@@ -9,7 +9,7 @@ define([
 ], function (
     module, declare, _ModelBase
 ) {
-    return declare(module.id, [_ModelBase], {
+    var Task = declare(module.id, [_ModelBase], {
         _propertyNames: ["id", "code", "name", "color"],
 
         id: null,
@@ -17,4 +17,19 @@ define([
         name: null,
         color: null
     });
+
+    /**
+     * "static" method to build a string for the task, including code and name if available.
+     * @param task
+     * @returns {string}
+     */
+    Task.getDisplayText = function(task) {
+        var text = task.code || "";
+        if (task.name) {
+            text += " " + task.name;
+        }
+        return text;
+    };
+
+    return Task;
 });
