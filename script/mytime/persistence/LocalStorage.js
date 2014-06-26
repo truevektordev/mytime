@@ -5,15 +5,16 @@
  */
 define([
     "exports", "lodash", "dojo/_base/lang",
-    "mytime/model/TimeEntry"
+        "mytime/persistence/Context"
 ],
-function (exports, _, lang) {
+function (exports, _, lang, Context) {
     /**
      * Methods for interfacting with HTML5 Local Storage
      */
     lang.mixin(exports, {
 
         persistObject: function(key, object) {
+            key = this._getKeyForContext(key);
             localStorage.setItem(key, JSON.stringify(object));
         },
 
@@ -26,6 +27,7 @@ function (exports, _, lang) {
          * @returns {*}
          */
         retrieveObject: function(key, constructor) {
+            key = this._getKeyForContext(key);
             var object = localStorage.getItem(key);
             if (!object) {
                 return null;
@@ -35,6 +37,15 @@ function (exports, _, lang) {
                 object = new constructor(object);
             }
             return object;
+        },
+
+        _getKeyForContext: function(key) {
+            var context = Context.getContext();
+            if (context) {
+                return context + "~" + key;
+            } else {
+                return key;
+            }
         },
 
         /**
