@@ -1,3 +1,10 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 div.dayslist {
     width: 200px;
     font-family: sans-serif;
@@ -338,4 +345,12 @@ form label {
 .task-form label {
     display: inline-block;
     width: 3.5em;
+}
+
+.footer {
+    position: fixed;
+    width: auto;
+    bottom: 0;
+    right: 0;
+    padding: 1px;
 }

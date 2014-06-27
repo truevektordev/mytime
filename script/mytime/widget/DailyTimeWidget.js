@@ -34,9 +34,9 @@ function (
          */
         date: null,
 
-        startHour: 7,
+        startHour: 6,
 
-        endHour: 22,
+        endHour: 24,
 
         timeEntryStore: null,
         taskStore: null,
