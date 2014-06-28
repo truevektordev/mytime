@@ -54,6 +54,8 @@ function (declare,
         _dayHoursNodes: null,
         _weekTotalNode: null,
         _weekDiffNode: null,
+        _prevWeekBtn: null,
+        _nextWeekBtn: null,
 
         _queryObserveHandle: null,
 
@@ -121,7 +123,9 @@ function (declare,
                         }
                     }
                 }),
-                this.watch('timeEntryStore', lang.hitch(this, '_handleWeekChange'))
+                this.watch('timeEntryStore', lang.hitch(this, '_handleWeekChange')),
+                on(this._nextWeekBtn, 'click', lang.hitch(this, 'addDays', 7)),
+                on(this._prevWeekBtn, 'click', lang.hitch(this, 'addDays', -7))
             )
         },
 
@@ -197,6 +201,18 @@ function (declare,
 
         _formatHours: function(hour) {
             return number.format(hour, { places: 2}) + '<span>h</span>';
+        },
+
+        /**
+         * Adjust the selectedDate by a certain number of days.
+         * @param daysToAdd number of days to add + or -
+         */
+        addDays: function(daysToAdd) {
+            var date = DateTimeUtil.convertDateStringToDateObject(this.get('selectedDate'));
+            var millis = date.valueOf();
+            millis += 86400000 * daysToAdd;
+            date.setTime(millis);
+            this.set('selectedDate', DateTimeUtil.convertDateObjectToDateString(date));
         }
     });
 });
