@@ -32,8 +32,39 @@ div.dayslist {
     }
 
         .dayslist thead th {
+            position: relative;
             text-align: center;
         }
+
+            .dayslist .next, .dayslist .prev {
+                display: block;
+                position: absolute;
+                width: 14px;
+                top: 2px;
+                height: 14px;
+                font-size: 11px;
+                border: 1px solid #333;
+                border-radius: 8px;
+                background-color: white;
+                cursor: pointer;
+                border-top-color: #666;
+                border-left-color: #666;
+
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            .dayslist .next {
+                right: 2px;
+            }
+
+            .dayslist .prev {
+                left: 2px;
+            }
 
         .dayslist tbody th {
             text-align: left;
