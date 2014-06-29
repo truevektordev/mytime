@@ -34,6 +34,28 @@ define([
 
         constructor: function() {
             this.own( syncFrom(modelRegistry, "timeEntryStore", this, "store") );
+        },
+
+        _beforeCreate: function(command) {
+            if (this._validate(command)) {
+                this.inherited(arguments);
+            }
+        },
+
+        _beforeUpdate: function(command) {
+            if (this._validate(command)) {
+                this.inherited(arguments);
+            }
+        },
+
+        _validate: function(command) {
+            var entry = command.timeEntry;
+            if (entry.startHour > entry.endHour) {
+                var swap = entry.startHour;
+                entry.startHour = entry.endHour;
+                entry.endHour = swap;
+            }
+            return true;
         }
     });
 
