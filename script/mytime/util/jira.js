@@ -17,7 +17,7 @@ define([
 
     exports.buildTimeLoggingLink = function(issueKey, timeEntry) {
         return  "https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=" + encodeURIComponent(issueKey) +
-            "&timeLogged=" + DateTimeUtil.duration(timeEntry) +
+            "&timeLogged=" + DateTimeUtil.formatWithTwoDecimals( DateTimeUtil.duration(timeEntry) ) +
             "h&timeEntyId=" + encodeURIComponent(timeEntry.id) +
             "&comment=" + encodeURIComponent(timeEntry.text || "");
     };

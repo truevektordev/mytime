@@ -148,7 +148,7 @@ function (
                 endHour: timeEntry.get("endHour")
             });
 
-            var destinationHour = DateTimeUtil.roundToFifteenMinutes(event.endHour);
+            var destinationHour = this._roundTimeToTicks(event.endHour, event);
             var propertyToModify = startOrEnd + "Hour";
             if (destinationHour === timeEntry.get(propertyToModify)) {
                 return; // Didn"t change significantly.
@@ -168,7 +168,7 @@ function (
 
         _doEndDragMove: function(event, timeEntry) {
             var diff = event.endHour - event.startHour;
-            diff = DateTimeUtil.roundToFifteenMinutes(diff);
+            diff = this._roundTimeToTicks(diff, event);
             if (diff === 0) {
                 return; // Didn"t change significantly.
             }
@@ -192,10 +192,18 @@ function (
                 endHour: Math.max(event.startHour, event.endHour)
             });
 
-            timeEntry.startHour = DateTimeUtil.roundToFifteenMinutes(timeEntry.startHour);
-            timeEntry.endHour = DateTimeUtil.roundToFifteenMinutes(timeEntry.endHour);
+            timeEntry.startHour = this._roundTimeToTicks(timeEntry.startHour, event);
+            timeEntry.endHour = this._roundTimeToTicks(timeEntry.endHour, event);
 
             return timeEntry;
+        },
+
+        _roundTimeToTicks: function(time, event) {
+            if (event.alternate) {
+                return DateTimeUtil.roundToFiveMinutes(time);
+            } else {
+                return DateTimeUtil.roundToFifteenMinutes(time);
+            }
         },
 
         _updateNowHour: function() {

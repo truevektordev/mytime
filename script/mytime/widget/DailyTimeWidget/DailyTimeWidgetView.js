@@ -29,8 +29,8 @@ function (declare,
     /**
      *
      * emits:
-     * - The following four drag events each have the event data { startHour: hour where the drag began, endHour hour
-     *   where the drag finished or currently is}
+     * - The following four drag events each have the event data { startHour: hour where the drag began, endHour: hour
+     *   where the drag finished or currently is, alternate: whether the CTRL key is pressed }
      * - startDrag, updateDrag, endDrag and cancelDrag
      */
     return declare([_WidgetBase, _TemplatedMixin, Evented], {
@@ -135,6 +135,7 @@ function (declare,
                     startHour: timeAtCursor,
                     endHour: timeAtCursor
                 };
+                this._updateAlternate(this._currentDrag, e);
                 this.emit("startDrag", this._currentDrag);
                 this._dragMouseEventHandles.push(
                     on(this.timeRowsContainer, "mousemove", lang.hitch(this, "_mouseMove")),
@@ -147,6 +148,7 @@ function (declare,
             var cell = this._getContainingCell(e.target);
             if (cell) {
                 this._currentDrag.endHour = this._getTimeAtPosition(e.x, cell);
+                this._updateAlternate(this._currentDrag, e);
                 this.emit("updateDrag", this._currentDrag);
             }
         },
@@ -161,10 +163,16 @@ function (declare,
             var cell = this._getContainingCell(e.target);
             if (cell) {
                 drag.endHour = this._getTimeAtPosition(e.x, cell);
+                this._updateAlternate(drag, e);
                 this.emit("endDrag", drag);
             } else {
                 this.emit("cancelDrag");
             }
+        },
+
+        _updateAlternate: function (data, event) {
+            data.alternate = event.ctrlKey || event.metaKey;
+            return data;
         },
 
         _getContainingCell: function(node) {

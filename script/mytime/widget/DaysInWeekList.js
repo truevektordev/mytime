@@ -200,7 +200,7 @@ function (declare,
         },
 
         _formatHours: function(hour) {
-            return number.format(hour, { places: 2}) + '<span>h</span>';
+            return DateTimeUtil.formatWithTwoDecimals(hour) + '<span>h</span>';
         },
 
         /**

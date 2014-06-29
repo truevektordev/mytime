@@ -26,7 +26,7 @@ define([
                 endHour: 14.0
             };
             expect(jira.buildTimeLoggingLink('CODE-123', timeEntry)).to.equal(
-                "https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=CODE-123&timeLogged=1.5h&timeEntyId=443&comment=Oh%20happy%20day%20%3A)!"
+                "https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=CODE-123&timeLogged=1.50h&timeEntyId=443&comment=Oh%20happy%20day%20%3A)!"
             );
         });
 
@@ -37,7 +37,18 @@ define([
                 endHour: 14.0
             };
             expect(jira.buildTimeLoggingLink('CODE-123', timeEntry)).to.equal(
-                "https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=CODE-123&timeLogged=1.5h&timeEntyId=443&comment="
+                "https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=CODE-123&timeLogged=1.50h&timeEntyId=443&comment="
+            );
+        });
+
+        it("rounds time to two decimals for time logging link", function() {
+            var timeEntry = {
+                id: '443',
+                startHour: 2,
+                endHour: 22.849
+            };
+            expect(jira.buildTimeLoggingLink('CODE-123', timeEntry)).to.equal(
+                "https://jira.vodori.com/secure/CreateWorklog!default.jspa?key=CODE-123&timeLogged=20.85h&timeEntyId=443&comment="
             );
         });
 
