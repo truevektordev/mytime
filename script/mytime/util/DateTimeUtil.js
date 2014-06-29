@@ -4,9 +4,9 @@
  * Available under MIT license <https://raw.githubusercontent.com/dwolverton/my/master/LICENSE.txt>
  */
 define([
-    "exports"
+    "exports", "dojo/number"
 ],
-function (exports) {
+function (exports, number) {
 
     /**
      * Returns the whole number beginning of the hour. For example, 11.5 would return 11.
@@ -115,5 +115,12 @@ function (exports) {
             return exports.duration(hour1.startHour, hour1.endHour);
         }
         return Math.abs(hour2 - hour1);
-    }
+    };
+
+    /**
+     * Given a number of hours, format it as a string with exactly two places after the decimal.
+     */
+    exports.formatWithTwoDecimals = function(duration) {
+        return number.format(duration, { places: 2});
+    };
 });
