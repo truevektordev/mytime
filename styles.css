@@ -34,6 +34,7 @@ div.dayslist {
 .dayslist thead th {
     position: relative;
     text-align: center;
+    height: 1.5em;
 }
 
 .dayslist .next, .dayslist .prev {
@@ -223,6 +224,8 @@ div.timegrid {
     line-height: 150%;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    padding-top: 3px;
 }
 
 .timegrid .start {
@@ -261,7 +264,7 @@ div.timegrid {
 }
 
 div.timelist {
-    width: 300px;
+    width: 400px;
     font-family: sans-serif;
     color: black;
 }
