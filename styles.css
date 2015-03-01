@@ -10,354 +10,355 @@ div.dayslist {
     font-family: sans-serif;
     color: #333;
 }
-    .dayslist table {
-        width: 100%;
-        border-collapse: collapse;
-        border: 1px solid black;
-    }
 
-    .dayslist tbody tr {
-        cursor: pointer;
-    }
+.dayslist table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #898989;
+}
 
-        .dayslist tbody tr.total, .dayslist tbody tr.selected {
-            cursor: default;
-        }
+.dayslist tbody tr {
+    cursor: pointer;
+}
 
-    .dayslist th {
-        background-color: #eee;
-        font-variant:small-caps;
-        padding: 1px 4px;
-        border-bottom: 1px solid black;
-    }
+.dayslist tbody tr.total, .dayslist tbody tr.selected {
+    cursor: default;
+}
 
-        .dayslist thead th {
-            position: relative;
-            text-align: center;
-        }
+.dayslist th {
+    background-color: #eee;
+    font-variant: small-caps;
+    padding: 1px 4px;
+    border-bottom: 1px solid #898989;
+}
 
-            .dayslist .next, .dayslist .prev {
-                display: block;
-                position: absolute;
-                width: 14px;
-                top: 2px;
-                height: 14px;
-                font-size: 11px;
-                border: 1px solid #333;
-                border-radius: 8px;
-                background-color: white;
-                cursor: pointer;
-                border-top-color: #666;
-                border-left-color: #666;
+.dayslist thead th {
+    position: relative;
+    text-align: center;
+}
 
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
+.dayslist .next, .dayslist .prev {
+    display: block;
+    position: absolute;
+    width: 14px;
+    top: 2px;
+    height: 14px;
+    font-size: 11px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    border-top-color: #666;
+    border-left-color: #666;
 
-            .dayslist .next {
-                right: 2px;
-            }
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
-            .dayslist .prev {
-                left: 2px;
-            }
+.dayslist .next {
+    right: 2px;
+}
 
-        .dayslist tbody th {
-            text-align: left;
-        }
+.dayslist .prev {
+    left: 2px;
+}
 
-    .dayslist td {
-        border: 1px solid black;
-        text-align: right;
-    }
-        .dayslist td span {
-            font-size: 80%;
-            padding-left: 2px;
-        }
+.dayslist tbody th {
+    text-align: left;
+}
 
-        .dayslist td.zero-time {
-            color: #666;
-            font-size: 80%;
-        }
+.dayslist td {
+    border: 1px solid #898989;
+    text-align: right;
+}
 
-    .dayslist .total {
-    }
+.dayslist td span {
+    font-size: 80%;
+    padding-left: 2px;
+}
 
-        .dayslist .total th {
-            font-weight: bold;
-            background-color: #ddd;
-        }
+.dayslist td.zero-time {
+    color: #666;
+    font-size: 80%;
+}
 
-        .dayslist .total td {
-            font-weight: bold;
-            background-color: #eee;
-        }
+.dayslist .total {
+}
 
-    div.dayslist td.in-the-black { /* Higher specificity to beat zero-time color */
-        color: green;
-    }
+.dayslist .total th {
+    font-weight: bold;
+    background-color: #ddd;
+}
 
-    div.dayslist td.in-the-red {
-        color: red;
-    }
+.dayslist .total td {
+    font-weight: bold;
+    background-color: #eee;
+}
 
-    .dayslist tbody .selected th, .dayslist tbody .selected td {
-        color: black;
-        background-color: cornflowerblue;
-    }
+div.dayslist td.in-the-black {
+    /* Higher specificity to beat zero-time color */
+    color: green;
+}
 
+div.dayslist td.in-the-red {
+    color: red;
+}
+
+.dayslist tbody .selected th, .dayslist tbody .selected td {
+    color: black;
+    background-color: cornflowerblue;
+}
 
 div.timegrid {
-	width: 300px;
-	font-family: sans-serif;
-	color: #333;
+    width: 300px;
+    font-family: sans-serif;
+    color: #333;
 }
 
-	.timegrid table {
-		width: 100%;
-		border-collapse: collapse;
-		border: 1px solid black;
+.timegrid table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #898989;
 
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-	}
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
-	.timegrid th {
-		background-color: #eee;
-		font-variant:small-caps;
-		padding: 1px 4px;
-	}
-		
-		.timegrid thead th {
-			text-align: center;
-			border-left-color: black;
-		}
-		
-		.timegrid tbody th {
-			text-align: right;
-			width: 4.2em;
-		}
-	
-	.timegrid th, .timegrid td {
-		border: 1px solid black;
-	}
-	
-	.timegrid td {
-		position: relative;
-	}
+.timegrid th {
+    background-color: #eee;
+    font-variant: small-caps;
+    padding: 1px 4px;
+}
 
-		.timegrid .small-ticks {
-			position: absolute;
-			height: 60%;
-			bottom: 0;
-		
-			border-left: 1px solid #eee;
-			border-right: 1px solid #eee;
-		}
-	
-		.timegrid .large-ticks {
-			position: absolute;
-			height: 100%;
-			bottom: 0;
-		
-			border-left: 1px solid #ccc;
-			border-right: 1px solid #ccc;
-		}
-	
-		.timegrid .ticks-1 {
-			left: 8.333%;
-			right: 8.333%;
-		}
-	
-		.timegrid .ticks-2 {
-			left: 16.667%;
-			right: 16.667%;
-		}
-	
-		.timegrid .ticks-3 {
-			left: 25%;
-			right: 25%;
-		}
-	
-		.timegrid .ticks-4 {
-			left: 33.333%;
-			right: 33.333%;
-		}
-	
-		.timegrid .ticks-5 {
-			left: 41.667%;
-			right: 41.667%;
-		}
-	
-		.timegrid .ticks-middle {
-			left: 50%;
-			width: 1px;
-			border-right-style: none;
-		}
-	
-		.timegrid .time-bar {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-            left: 0;
-            right: 0;
-			opacity: .8;
-			border-width: 1px;
-			border-style: solid none;
+.timegrid thead th {
+    text-align: center;
+    border-left-color: #898989;
+}
 
-            color: black;
-            text-align: center;
-            font-weight: bold;
-            font-size: 80%;
-            line-height: 150%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-		}
-	
-			.timegrid .start {
-				border-left-style: solid;
-				border-top-left-radius: .5em;
-				border-bottom-left-radius: .5em;
-			}
-	
-			.timegrid .end {
-				border-right-style: solid;
-				border-top-right-radius: .5em;
-				border-bottom-right-radius: .5em;
-			}
+.timegrid tbody th {
+    text-align: right;
+    width: 4.2em;
+}
 
-            .timegrid .time-bar.selected {
-                opacity: 1;
-                border-color: #333 !important;
-            }
+.timegrid th, .timegrid td {
+    border: 1px solid #898989;
+}
 
-    .timegrid .mark {
-        position: absolute;
-        height: 120%;
-        width: 2px;
-        top: -10%;
-        left: 55%;
-        margin-left: 0;
-        z-index: 100;
-    }
+.timegrid td {
+    position: relative;
+}
 
-        .timegrid .mark.now {
-            background-color: rgb(90, 107, 236);
-        }
+.timegrid .small-ticks {
+    position: absolute;
+    height: 60%;
+    bottom: 0;
 
-        .timegrid .mark.end-of-day {
-            background-color: rgb(30, 198, 80);
-        }
-			
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
+}
+
+.timegrid .large-ticks {
+    position: absolute;
+    height: 100%;
+    bottom: 0;
+
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.timegrid .ticks-1 {
+    left: 8.333%;
+    right: 8.333%;
+}
+
+.timegrid .ticks-2 {
+    left: 16.667%;
+    right: 16.667%;
+}
+
+.timegrid .ticks-3 {
+    left: 25%;
+    right: 25%;
+}
+
+.timegrid .ticks-4 {
+    left: 33.333%;
+    right: 33.333%;
+}
+
+.timegrid .ticks-5 {
+    left: 41.667%;
+    right: 41.667%;
+}
+
+.timegrid .ticks-middle {
+    left: 50%;
+    width: 1px;
+    border-right-style: none;
+}
+
+.timegrid .time-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: .8;
+    border-width: 1px;
+    border-style: solid none;
+
+    color: black;
+    text-align: center;
+    font-weight: bold;
+    font-size: 80%;
+    line-height: 150%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.timegrid .start {
+    border-left-style: solid;
+    border-top-left-radius: .5em;
+    border-bottom-left-radius: .5em;
+}
+
+.timegrid .end {
+    border-right-style: solid;
+    border-top-right-radius: .5em;
+    border-bottom-right-radius: .5em;
+}
+
+.timegrid .time-bar.selected {
+    opacity: 1;
+    border-color: #333 !important;
+}
+
+.timegrid .mark {
+    position: absolute;
+    height: 120%;
+    width: 2px;
+    top: -10%;
+    left: 55%;
+    margin-left: 0;
+    z-index: 100;
+}
+
+.timegrid .mark.now {
+    background-color: rgb(90, 107, 236);
+}
+
+.timegrid .mark.end-of-day {
+    background-color: rgb(30, 198, 80);
+}
+
 div.timelist {
-	width: 300px;
-	font-family: sans-serif;
-	color: black;
+    width: 300px;
+    font-family: sans-serif;
+    color: black;
 }
 
-	.timelist .timeentry {
-		border: 1px solid black;
-		border-radius: .4em;
-		padding: .2em .4em;
-		margin: 0 0 .1em 0;
-        font-size: 80%;
-        position: relative;
-        opacity: .8;
-	}
+.timelist .timeentry {
+    border: 1px solid #898989;
+    border-radius: .4em;
+    padding: .2em .4em;
+    margin: 0 0 .1em 0;
+    font-size: 80%;
+    position: relative;
+    opacity: .8;
+}
 
-    .timelist .timeentry.selected {
-        border-width: 1px 2px 2px 1px;
-        opacity: 1;
-    }
+.timelist .timeentry.selected {
+    border-width: 1px 2px 2px 1px;
+    opacity: 1;
+}
 
-        .dijitMenuItem .task,
-        .timelist .timeentry .task {
-            display: block;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+.dijitMenuItem .task,
+.timelist .timeentry .task {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-        .dijitMenuItem .task {
-            font-size: 80%;
-        }
+.dijitMenuItem .task {
+    font-size: 80%;
+}
 
-            .dijitMenuItem .code,
-            .timelist .timeentry .code {
-                font-weight: bold;
-                padding-right: .2em;
-            }
+.dijitMenuItem .code,
+.timelist .timeentry .code {
+    font-weight: bold;
+    padding-right: .2em;
+}
 
-            .dijitMenuItem .name,
-            .timelist .timeentry .name {
-                font-style: italic;
-            }
+.dijitMenuItem .name,
+.timelist .timeentry .name {
+    font-style: italic;
+}
 
-        .timelist .top-right {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-        }
+.timelist .top-right {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+}
 
-        .timelist .bottom-right {
-            position: absolute;
-            bottom: 3px;
-            right: 3px;
-        }
+.timelist .bottom-right {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+}
 
-            .timelist .menu-button img {
-                vertical-align: bottom;
-            }
+.timelist .menu-button img {
+    vertical-align: bottom;
+}
 
-        .timelist .jira-create-worklog {
-            font-size: 90%;
-            text-decoration: none;
-            color: black;
-            text-shadow: 1px 2px black;
-        }
+.timelist .jira-create-worklog {
+    font-size: 90%;
+    text-decoration: none;
+    color: black;
+    text-shadow: 1px 2px black;
+}
 
-            .timelist .jira-create-worklog:visited {
-                color: white;
-            }
+.timelist .jira-create-worklog:visited {
+    color: white;
+}
 
-            .timelist .jira-create-worklog img {
-                height: 1em;
-                width: 1em;
-            }
+.timelist .jira-create-worklog img {
+    height: 1em;
+    width: 1em;
+}
 
-		.timelist .timeentry .note .dijitTextArea {
-            width: 90%;
-		}
-		
-		.timelist .timeentry input.key {
-			font-weight: bold;
-		}
-	
-		.timelist .timeentry textarea.note {
-			width: 100%;
-		}
+.timelist .timeentry .note .dijitTextArea {
+    width: 90%;
+}
 
+.timelist .timeentry input.key {
+    font-weight: bold;
+}
+
+.timelist .timeentry textarea.note {
+    width: 100%;
+}
 
 div.dayslist {
     float: left;
 }
 
 div.timegrid {
-	float: left;
+    float: left;
     margin-left: .5em;
 }
 
 div.timelist {
-	float: left;
-	margin-left: .5em;
+    float: left;
+    margin-left: .5em;
 }
 
 form label {
