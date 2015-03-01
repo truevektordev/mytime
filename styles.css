@@ -114,7 +114,7 @@ div.dayslist td.in-the-red {
 }
 
 div.timegrid {
-    width: 350px;
+    width: 400px;
     font-family: sans-serif;
     color: #333;
 }
@@ -263,7 +263,7 @@ div.timegrid {
 }
 
 div.timelist {
-    width: 400px;
+    width: 500px;
     font-family: sans-serif;
     color: black;
 }
