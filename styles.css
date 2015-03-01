@@ -339,6 +339,8 @@ div.timelist {
 
 .timelist .timeentry .note .dijitTextArea {
     width: 90%;
+    margin-top: 5px;
+    font-family: inherit;
 }
 
 .timelist .timeentry input.key {
