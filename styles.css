@@ -140,6 +140,7 @@ div.timegrid {
 .timegrid thead th {
     text-align: center;
     border-left-color: #898989;
+    height: 1.5em;
 }
 
 .timegrid tbody th {
