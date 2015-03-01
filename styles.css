@@ -40,7 +40,8 @@ div.dayslist {
     display: block;
     position: absolute;
     width: 14px;
-    top: 2px;
+    top: 4px;
+    padding-top: 1px;
     height: 14px;
     font-size: 11px;
     border: 1px solid #333;
@@ -68,6 +69,7 @@ div.dayslist {
 
 .dayslist tbody th {
     text-align: left;
+    height: 1.5em;
 }
 
 .dayslist td {
@@ -113,7 +115,7 @@ div.dayslist td.in-the-red {
 }
 
 div.timegrid {
-    width: 300px;
+    width: 350px;
     font-family: sans-serif;
     color: #333;
 }
@@ -143,7 +145,8 @@ div.timegrid {
 
 .timegrid tbody th {
     text-align: right;
-    width: 4.2em;
+    width: 5em;
+    height: 1.5em;
 }
 
 .timegrid th, .timegrid td {
