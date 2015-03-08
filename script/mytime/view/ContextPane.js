@@ -20,15 +20,14 @@ define([
 
             var contexts = {};
 
-            // first get each of the contexts
-            _.forEach(localStorage, function(__, key) {
-                if(_.isString(key)) {
-                    var pieces = key.split('~');
-                    if(pieces.size() > 1) {
-                        contexts[pieces[0]] = true;
-                    }
+            // first get each of the contexts (lodash foreach doesn't work so well on localStorage)
+            for(var key in localStorage) {
+                var pieces = key.split('~');
+
+                if(pieces.size() > 1) {
+                    contexts[pieces[0]] = true;
                 }
-            });
+            }
 
             // loop through list of contexts, and create link
             _.forEach(contexts, function(__, context) {
