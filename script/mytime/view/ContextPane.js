@@ -24,7 +24,7 @@ define([
             for(var key in localStorage) {
                 var pieces = key.split('~');
 
-                if(pieces.size() > 1) {
+                if(pieces.length > 1) {
                     contexts[pieces[0]] = true;
                 }
             }
