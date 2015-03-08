@@ -29,8 +29,11 @@ define([
                 }
             }
 
+            contexts = _.toArray(contexts);
+            contexts = _.sortBy(contexts);
+
             // loop through list of contexts, and create link
-            _.forEach(contexts, function(__, context) {
+            _.forEach(contexts, function(context) {
                 var attrs = {
                     href: '?ctx=' + context,
                     innerHTML: this._capitalize(context)
