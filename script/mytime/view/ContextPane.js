@@ -22,9 +22,11 @@ define([
 
             // first get each of the contexts
             _.forEach(localStorage, function(__, key) {
-                var pieces = key.split('~');
-                if(pieces.size() > 1) {
-                    contexts[pieces[0]] = true;
+                if(_.isString(key)) {
+                    var pieces = key.split('~');
+                    if(pieces.size() > 1) {
+                        contexts[pieces[0]] = true;
+                    }
                 }
             });
 
