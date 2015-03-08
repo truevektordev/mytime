@@ -18,6 +18,8 @@ define([
         postCreate: function() {
             "use strict";
 
+            domConstruct.create('span', { innerHTML: 'Contexts: '}, this.domNode);
+
             var contexts = {};
 
             // first get each of the contexts (lodash foreach doesn't work so well on localStorage)

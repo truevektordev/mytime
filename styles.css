@@ -385,6 +385,7 @@ form label {
 }
 
 .footer {
+    font-family: sans-serif;
     position: fixed;
     width: auto;
     bottom: 0;
