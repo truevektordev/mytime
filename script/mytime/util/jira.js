@@ -16,7 +16,7 @@ define([
     };
 
     exports.buildTimeLoggingLink = function(issueKey, timeEntry) {
-        return  "http://192.168.1.11:8080/secure/CreateWorklog!default.jspa?key=" + encodeURIComponent(issueKey) +
+        return  "http://saveaction.noip.me/secure/CreateWorklog!default.jspa?key=" + encodeURIComponent(issueKey) +
             "&timeLogged=" + DateTimeUtil.formatWithTwoDecimals( DateTimeUtil.duration(timeEntry) ) +
             "h&timeEntyId=" + encodeURIComponent(timeEntry.id) +
             "&comment=" + encodeURIComponent(timeEntry.text || "");
