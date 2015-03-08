@@ -29,7 +29,10 @@ define([
                 }
             }
 
-            contexts = _.toArray(contexts);
+            contexts = _.collect(contexts, function(__, key) {
+                return key;
+            });
+
             contexts = _.sortBy(contexts);
 
             // loop through list of contexts, and create link
