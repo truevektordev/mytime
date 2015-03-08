@@ -33,7 +33,7 @@ define([
             _.forEach(contexts, function(__, context) {
                 var attrs = {
                     href: '?ctx=' + context,
-                    innerHTML: context
+                    innerHTML: _.capitalize(context)
                 };
 
                 domConstruct.create('a', attrs, this.domNode);

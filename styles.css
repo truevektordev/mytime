@@ -390,4 +390,9 @@ form label {
     bottom: 0;
     right: 0;
     padding: 1px;
+    margin-bottom: 10px;
+}
+
+.footer a {
+    margin-right: 10px;
 }
