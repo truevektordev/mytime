@@ -33,11 +33,18 @@ define([
             _.forEach(contexts, function(__, context) {
                 var attrs = {
                     href: '?ctx=' + context,
-                    innerHTML: _.capitalize(context)
+                    innerHTML: this._capitalize(context)
                 };
 
                 domConstruct.create('a', attrs, this.domNode);
             }, this);
+        },
+
+        // capitalize is in the latest lodash, but the templating is different, and i don't care to solve that right now
+        _capitalize: function(string) {
+            "use strict";
+
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
     });
