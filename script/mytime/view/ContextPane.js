@@ -32,7 +32,8 @@ define([
             // loop through list of contexts, and create link
             _.forEach(contexts, function(__, context) {
                 var attrs = {
-                    href: '?ctx=' + context
+                    href: '?ctx=' + context,
+                    innerHTML: context
                 };
 
                 domConstruct.create('a', attrs, this.domNode);
