@@ -1,11 +1,13 @@
 define([
     "lodash", "exports",
     "dojo/_base/lang", "dojo/_base/declare",
-    "mytime/util/DateTimeUtil"
+    "mytime/util/DateTimeUtil",
+    "mytime/persistence/LocalStorage"
 ], function (
     _, exports,
     lang, declare,
-    DateTimeUtil) {
+    DateTimeUtil,
+    LocalStorage) {
 
     /**
      * Does the given string match the JIRA issue key format.
@@ -16,7 +18,9 @@ define([
     };
 
     exports.buildTimeLoggingLink = function(issueKey, timeEntry) {
-        return  "http://saveaction.noip.me/secure/CreateWorklog!default.jspa?key=" + encodeURIComponent(issueKey) +
+        var base = LocalStorage.retrieveObject("jiraBase");
+        
+        return  base + encodeURIComponent(issueKey) +
             "&timeLogged=" + DateTimeUtil.formatWithTwoDecimals( DateTimeUtil.duration(timeEntry) ) +
             "h&timeEntyId=" + encodeURIComponent(timeEntry.id) +
             "&comment=" + encodeURIComponent(timeEntry.text || "");
