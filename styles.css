@@ -276,6 +276,11 @@ div.timelist {
     font-size: 80%;
     position: relative;
     opacity: .8;
+    height: 1.5em;
+}
+
+.timelist .timeentry .edit {
+    height: inherit;
 }
 
 .timelist .timeentry.selected {
@@ -314,7 +319,7 @@ div.timelist {
 
 .timelist .bottom-right {
     position: absolute;
-    bottom: 4px;
+    bottom: 6px;
     right: 3px;
 }
 
