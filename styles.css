@@ -271,11 +271,12 @@ div.timelist {
 .timelist .timeentry {
     border: 1px solid #898989;
     border-radius: .4em;
-    padding: .2em .4em;
+    padding: 0.5em 0.4em 0.2em 0.4em;
     margin: 0 0 5px 0;
     font-size: 80%;
     position: relative;
     opacity: .8;
+    height: 1.5em;
 }
 
 .timelist .timeentry.selected {
@@ -314,7 +315,7 @@ div.timelist {
 
 .timelist .bottom-right {
     position: absolute;
-    bottom: 3px;
+    bottom: 6px;
     right: 3px;
 }
 
