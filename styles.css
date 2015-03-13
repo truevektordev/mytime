@@ -276,7 +276,6 @@ div.timelist {
     font-size: 80%;
     position: relative;
     opacity: .8;
-    height: 1.5em;
 }
 
 .timelist .timeentry.selected {
