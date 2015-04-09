@@ -294,6 +294,10 @@ div.timelist {
     text-overflow: ellipsis;
 }
 
+.timelist .timeentry .task .taskpicker {
+    width: 437px;
+}
+
 .dijitMenuItem .task {
     font-size: 80%;
 }
