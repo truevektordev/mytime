@@ -93,7 +93,7 @@ function (declare,
             }
 
             for (var i = 0; i < 7; i++) {
-                var selected = this._selectedDayOfWeek === i;
+                var selected = this._selectedDayOfWeek === (i - 1);
                 var date = this._getDateOfNthDay(i);
 
                 domClass.toggle(this._dayRowNodes[i], 'selected', selected);
