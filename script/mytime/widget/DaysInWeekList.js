@@ -63,6 +63,10 @@ function (declare,
             this._set('selectedDate', value);
             var date = DateTimeUtil.convertDateStringToDateObject(value);
             this._selectedDayOfWeek = date.getDay() - 1;
+            if(this._selectedDayOfWeek === -1) {
+                this._selectedDayOfWeek = 6;
+            }
+            
             var oldFirstDayOfWeek = this._firstDayOfWeek;
             this._firstDayOfWeek = dojoDate.add(date, 'day', -this._selectedDayOfWeek);
             this._fillIn();
