@@ -62,9 +62,9 @@ function (declare,
         _setSelectedDateAttr: function(value) {
             this._set('selectedDate', value);
             var date = DateTimeUtil.convertDateStringToDateObject(value);
-            this._selectedDayOfWeek = date.getDay();
+            this._selectedDayOfWeek = date.getDay() - 1;
             var oldFirstDayOfWeek = this._firstDayOfWeek;
-            this._firstDayOfWeek = dojoDate.add(date, 'day', -(this._selectedDayOfWeek - 1));
+            this._firstDayOfWeek = dojoDate.add(date, 'day', -this._selectedDayOfWeek);
             this._fillIn();
             if (!oldFirstDayOfWeek || this._firstDayOfWeek.getTime() !== oldFirstDayOfWeek.getTime()) {
                 this._handleWeekChange();
@@ -93,7 +93,7 @@ function (declare,
             }
 
             for (var i = 0; i < 7; i++) {
-                var selected = this._selectedDayOfWeek === (i - 1);
+                var selected = this._selectedDayOfWeek === i;
                 var date = this._getDateOfNthDay(i);
 
                 domClass.toggle(this._dayRowNodes[i], 'selected', selected);
