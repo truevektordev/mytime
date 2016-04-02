@@ -64,7 +64,7 @@ function (declare,
             var date = DateTimeUtil.convertDateStringToDateObject(value);
             this._selectedDayOfWeek = date.getDay();
             var oldFirstDayOfWeek = this._firstDayOfWeek;
-            this._firstDayOfWeek = dojoDate.add(date, 'day', -this._selectedDayOfWeek);
+            this._firstDayOfWeek = dojoDate.add(date, 'day', -(this._selectedDayOfWeek - 1));
             this._fillIn();
             if (!oldFirstDayOfWeek || this._firstDayOfWeek.getTime() !== oldFirstDayOfWeek.getTime()) {
                 this._handleWeekChange();
