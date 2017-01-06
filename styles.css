@@ -9,6 +9,10 @@ div.dayslist {
     color: #333;
 }
 
+.duration {
+    margin-right: 10px;
+}
+
 .dayslist table {
     width: 100%;
     border-collapse: collapse;
